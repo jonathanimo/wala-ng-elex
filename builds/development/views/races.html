@@ -1,0 +1,45 @@
+<section>	
+	<style>
+		.one_race{
+			border: 2px solid rgba(224,224,224,1);
+			margin:20px 0px;
+			padding:10px;
+			-webkit-border-radius: 15px;
+			-moz-border-radius: 15px;
+			border-radius: 15px;
+			-webkit-box-shadow: -8px 5px 17px 0px rgba(50, 50, 50, 0.31);
+			-moz-box-shadow:-8px 5px 17px 0px rgba(50, 50, 50, 0.31);
+			box-shadow:-8px 5px 17px 0px rgba(50, 50, 50, 0.31);
+		}
+		.win{font-size:2em;
+			color:green;}
+	</style>
+	<body ng-controller="ElectionFrontEndController as raceViewCtrl">
+		<h1 class="text-center">Tax Vote Election Results<br/>
+		<small class="precints">PRECINTS REPORTING: <span>PRECINTSREPORTING</span></small><br/>
+		<small class="precints">UPDATED: <span>{{raceViewCtrl.r[0].updated | date}}</span></small>
+		</h1>
+			<section ng-repeat="race in r"  class="one_race row text-center">
+				<h2 class="text-center">{{race.raceName}}<small>{{race.allVotes | number}}</small></h2>
+					<div class="candidates">
+						<div ng-repeat="candidate in race.candidates" class="one_cand col-sm-6">
+							<div class="cand_name">
+								<h2>
+									<STRONG>{{candidate.firstName + " " + candidate.lastName}}</STRONG><small>{{candidate.party}}</small>
+								</h2>
+							</div><!-- cand_name -->
+							<div class="percent progress">
+	  							<div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="{{candidate.pctTotal}}" aria-valuemin="0" aria-valuemax="100" ng-style="{'min-width': '2em', 'width': candidate.pctTotal+'%'}">
+	    						{{candidate.pctTotal}}%
+	 							</div>
+							</div><!-- .percent .progress -->
+							<div class="votes">
+								<h4>
+									{{candidate.voteTotal | number}} / {{race.allVotes | number}} votes
+								</h4>
+							</div><!-- votes -->
+						</div><!-- one_cand -->
+					</div>
+			</div><!-- one_race -->
+		</div> <!-- container -->
+	</section>

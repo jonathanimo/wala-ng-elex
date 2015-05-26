@@ -1,0 +1,256 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" ng-app="elexApp">
+<head>
+  <meta charset="UTF-8">
+  <title>Angular Data</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <!-- CDN LOADS -->
+  <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+  <script src="https://cdn.firebase.com/js/client/2.1.0/firebase.js"></script>
+  <!--script src="js/lib/angular/angular.min.js"></script-->
+  <script src="javascripts/lib/angular/angular.js"></script>
+  <script src="javascripts/lib/angular/angular-ui-router.js"></script>
+  <script src="javascripts/lib/angular/angular-animate.min.js"></script>
+<!-- END CDN LOADS -->
+<!-- MY LOADS -->
+
+  <script src="javascripts/angularApp.js"></script>
+  <script src="javascripts/controllers/registration.js"></script>
+  <script src="javascripts/services/authentication.js"></script>
+  <script src="javascripts/services/getRaces.js"></script>
+  <script src="javascripts/controllers/backend.js"></script>
+  <script src="javascripts/controllers/frontend.js"></script>
+  <script src="javascripts/controllers/status.js"></script>
+
+  <!-- END MY LOADS -->
+</head>
+<body>
+<header>
+</header>
+<div class="page">
+  <div class="userinfo" 
+    ng-controller="StatusController" ng-show="currentUser">
+    <span class="userinfo">Hi {{ currentUser.firstname }}</span>
+    <a ng-href="#/logout" ng-click="logout()">logout</a>
+  </div><!-- userInfo block -->
+  <ui-view></ui-view>
+</div>
+<script type="text/ng-template" id="/login.html">
+  <section class="login">
+    <form name="myform"
+      ng-submit="login()"
+      novalidate>
+
+      <h1>Hi there!</h1>
+      <p>Log-in to access the awesomeness!</p>
+
+      <p class="error formerror" ng-show="message">{{ message }}</p>
+
+      <input type="email" name="email" placeholder="Email"
+        ng-model="user.email" ng-required="true">
+      <p class="error validationerror"
+        ng-show="myform.email.$invalid && myform.email.$touched">
+        Must be a valid email</p>
+      
+      <input type="password" name="password" placeholder="Password"
+        ng-model="user.password" ng-required="true">
+      <p class="error validationerror"
+        ng-show="myform.password.$invalid && myform.password.$touched">
+        password is required</p>
+
+      <button type="submit" class="btn"
+        ng-disabled="myform.$invalid">Login</button>
+      <p>or <a href="#/register">register</a></p>
+    </form>
+  </section>
+</script>
+<script type="text/ng-template" id="/election-form.html">
+  <section ng-repeat="r in races" class="new-elex">
+      <form class="oneElex" name="ElexForm1" id="elex1" action="" ng-submit="addRace()" novalidate>
+        <div class="form-group">
+          <label for="raceName">Race Name</label>
+          <input id="raceName" type="text" ng-model="r.raceName"/>
+        </div>
+        <div class="form-group">
+          <label for="raceSeats">Seats</label>
+          <input id="raceSeats" type="number"  ng-model="r.raceSeats"/>
+        </div>
+        <div class="form-group">
+          <label for="precinctsRep">Precincts Reporting</label>
+          <input id="precinctsRep" type="number" ng-model="r.precinctsRep" />
+        </div>
+        <div class="form-group">
+          <label for="precinctsTotal">Total Precincts</label>
+          <input id="precinctsTotal" type="text"  ng-model="r.precinctsTotal "/>
+        </div>
+        <div class="form-group">
+          <label for="isOver">Is the race over?</label>
+          <input id="isOver" type="checkbox"  ng-model="r.isOver"/>
+        </div>
+        <div class="form-group">
+          <label for="allVotes">Total Votes</label>
+          <input id="allVotes" type="number" disabled ng-model="r.totalVotes"/>
+          <button id="calcVotes" type="button" class="btn btn-primary">Calculate Total</button>
+        </div>
+        <div class="form-group">
+          <label for="updatedTime">Last Update</label>
+          <input id="updatedTime" type="text" disabled ng-model="r.updated"/>
+        </div>
+        <h1>Candidates</h1>
+        <div class="oneElexCands">
+          <div class="oneCandidate form-group" ng-repeat="can in r.candidates">
+            <button type="button" id="addCandidates_elex1" ng-click="addCandidate()" class="addCandidates btn btn-default">Add Candidate</button>
+            <label for="candidateId">Id</label>
+              <input class="candidateId" type="number" ng-model="can.candidateId" disabled />
+            <label for="candidateFirstName">First Name</label>
+              <input class="candidateFirstName" placeholder="Enter Candidate info" ng-model="can.firstName" type="text" />
+            <label for="candidateLastName">Last Name</label>
+              <input class="candidateLastName" ng-model="can.lastName" type="text" />
+            <label class="candidateParty">Party</label>
+              <input id="candidateParty" ng-model="can.party" type="text" />
+            <label for="candidateVotes">Votes</label>
+              <input class="candidateVotes" ng-model="can.voteTotal" type="number" />
+            <button class="removeCandidate" type="button" class="btn btn-danger">Remove This Candidate</button>
+          </div>
+        </div>
+        <button type="submit" onclick="" id="submitRace" class="btn btn-success" ng-disabled="myform.$invalid">Update race</button>
+        </form>
+
+
+        <div id="updatedELection"></div>
+      <script type="text/javascript"> 
+      /*$(document).ready(function() {
+          var canWrapper          = $(".oneElexCands"); //Fields canWrapper
+          var addButton         = $(".addCandidates"); //Add candidate button ID
+          var removeButton    = $(".removeCandidate"); // remove candidate button class
+          var canCount      = 100; //initlal text box count
+          var allRaceCands    = []; // array all candidates in race for calculations
+          var totalVoteCount    = ""; 
+          $(addButton).click(function(e){ //on add input button click
+              e.preventDefault();
+              canCount++; //text box increment
+              $(canWrapper).append('<div id="candidate_'
+              + canCount +
+              '"class="oneCandidate form-group">'+
+              '<label for="candidateId">Id</label>'+
+          '<input id="candidateId" type="number" ng-model="can'+ canCount +'" value="'
+          + canCount +
+          '" disabled/>'+
+          '<label for="candidateFirstName">First Name</label>'+
+          '<input id="candidateFirstName" type="text" ng-model="can'+ canCount +'fname" />'+
+          '<label for="candidateLastName">Last Name</label>'+
+          '<input id="candidateLastName" type="text" ng-model="can'+ canCount +'lname" />'+
+          '<label for="candidateParty">Party</label>'+
+          '<input id="candidateParty" type="text" ng-model="can'+ canCount +'party" />'+
+          '<label for="candidateVotes">Votes</label>'+
+          '<input id="candidateVotes" type="number" ng-model="can'+ canCount +'votes" />'+
+          '<button class="removeCandidate" type="button" class="btn btn-danger">'
+          +'Remove This Candidate</button></div>');
+          });
+      $(canWrapper).on("click",'.removeCandidate', function(e){ //user click on remove text
+          e.preventDefault();
+              if (confirm("Are you sure you want to delete ths candidate? \n THIS CANNOT BE UNDONE!")){ 
+                $(this)
+                .parent('div.oneCandidate')
+                .remove();
+                canCount--
+            };
+        });
+      }); //document ready*/
+    </script>
+  </section>
+</script>
+<script type="text/ng-template" id="/new-user.html">
+  <section class="register">
+    <form name="myform"
+      ng-submit="register()"
+      novalidate>
+
+      <h1>Register</h1>
+      <p>To access site features</p>
+
+      <p class="error formerror" ng-show="message">{{ message }}</p>
+
+      <input type="firstname" name="firstname" placeholder="First Name"
+        ng-model="user.firstname" ng-required="true">
+      <p class="error validationerror"
+        ng-show="myform.firstname.$invalid && myform.firstname.$touched">
+        First Name is required</p>
+
+      <input type="lastname" name="lastname" placeholder="Last Name"
+        ng-model="user.lastname" ng-required="true">
+      <p class="error validationerror"
+        ng-show="myform.lastname.$invalid && myform.lastname.$touched">
+        Last Name is required</p>
+      
+
+      <input type="email" name="email" placeholder="Email"
+        ng-model="user.email" ng-required="true">
+      <p class="error validationerror"
+        ng-show="myform.email.$invalid && myform.email.$touched">
+        Must be a valid email</p>
+      
+      <input type="password" name="password" placeholder="Password"
+        ng-model="user.password" ng-required="true">
+      <p class="error validationerror"
+        ng-show="myform.password.$invalid && myform.password.$touched">
+        password is required</p>
+
+      <button type="submit" class="btn"
+        ng-disabled="myform.$invalid">Register</button>
+      <p>or <a href="#/login">login</a></p>
+    </form>
+  </section>
+</script>
+<script type="text/ng-template" id="/races.html">
+  <section> 
+    <style>
+      .one_race{
+        border: 2px solid rgba(224,224,224,1);
+        margin:20px 0px;
+        padding:10px;
+        -webkit-border-radius: 15px;
+        -moz-border-radius: 15px;
+        border-radius: 15px;
+        -webkit-box-shadow: -8px 5px 17px 0px rgba(50, 50, 50, 0.31);
+        -moz-box-shadow:-8px 5px 17px 0px rgba(50, 50, 50, 0.31);
+        box-shadow:-8px 5px 17px 0px rgba(50, 50, 50, 0.31);
+      }
+      .win{font-size:2em;
+        color:green;}
+    </style>
+    <body ng-controller="ElectionFrontEndController as raceViewCtrl">
+      <h1 class="text-center">Tax Vote Election Results<br/>
+      <small class="precints">PRECINTS REPORTING: <span>PRECINTSREPORTING</span></small><br/>
+      <small class="precints">UPDATED: <span>{{raceViewCtrl.r[0].updated | date}}</span></small>
+      </h1>
+        <section ng-repeat="r in races"  class="one_race row text-center">
+          <h2 class="text-center">{{r.raceName}}<small>{{r.allVotes | number}}</small></h2>
+            <div class="candidates">
+              <div ng-repeat="candidate in r.candidates" class="one_cand col-sm-6">
+                <div class="cand_name">
+                  <h2>
+                    <STRONG>{{candidate.firstName + " " + candidate.lastName}}</STRONG><small>{{candidate.party}}</small>
+                  </h2>
+                </div><!-- cand_name -->
+                <div class="percent progress">
+                    <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="{{candidate.pctTotal}}" aria-valuemin="0" aria-valuemax="100" ng-style="{'min-width': '2em', 'width': candidate.pctTotal+'%'}">
+                    {{candidate.pctTotal}}%
+                  </div>
+                </div><!-- .percent .progress -->
+                <div class="votes">
+                  <h4>
+                    {{candidate.voteTotal | number}} / {{r.allVotes | number}} votes
+                  </h4>
+                </div><!-- votes -->
+              </div><!-- one_cand -->
+            </div>
+        </div><!-- one_race -->
+      </div> <!-- container -->
+    </section>
+</script>
+
+</body>
+</html>

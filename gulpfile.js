@@ -21,14 +21,5 @@ gulp.task('watch', function() {
     'builds/development/views/*.html'], ['html']);
 });
 
-gulp.task('webserver', function() {
-  gulp.src('builds/development/')
-    .pipe(webserver({
-      livereload: true,
-      open: true,
-      port:8080,
-      host:"127.0.0.1"
-    }));
-});
 
-gulp.task('default', ['watch', 'html', 'js', 'css', 'webserver']);
+gulp.task('default', ['watch', 'html', 'js', 'css']);

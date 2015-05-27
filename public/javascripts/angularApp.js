@@ -28,7 +28,12 @@ elexApp.config(['$stateProvider','$urlRouterProvider', function($stateProvider, 
     .state('election', {
       url:'/election/{election}',
       templateUrl: '/races.html',
-      controller:  'ElectionFrontEndController'
+      controller:  'ElectionFrontEndController',
+      /*resolve: {
+        electionPromise: ['ElectionFactory', function(ElectionFactory){
+          return ElectionFactory.getRaces();
+        }]
+      }*/
     })
     .state('update', {
       url:'/update',

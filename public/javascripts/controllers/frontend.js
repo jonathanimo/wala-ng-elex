@@ -1,7 +1,8 @@
-elexApp.controller('ElectionFrontEndController', function($scope, $http, $stateParams, ElectionFactory,$location) {
-   ElectionFactory.getRaces().success(function(data){
-   		$scope.races=data[$stateParams.election].races;
-   });
+elexApp.controller('ElectionFrontEndController', function($scope,ElectionFactory,$stateParams,$location) {
+   	$scope.races = ElectionFactory.election[$stateParams.election];
+   	console.log($scope.races);
+   	console.log(ElectionFactory.election);
+
 });
 
 
@@ -13,3 +14,5 @@ elexApp.controller('ElectionFrontEndController', function($scope, $http, $stateP
 // 	   	 });
 // 	   	}
 // 	   	$scope.getAll();
+
+//$scope.post = posts.posts[$stateParams.id];

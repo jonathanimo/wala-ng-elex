@@ -6,7 +6,8 @@
   "private": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "debug": "node .bin/www DEBUG=wala-ng-elex"
   },
   "author": "",
   "license": "ISC",

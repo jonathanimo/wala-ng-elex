@@ -14,11 +14,23 @@ var Election = mongoose.model('Election');
 
 router.param('election', function(req, res, next, id) {
   var query = Election.findById(id);
-  query.exec(function (err, election){
-    if (err) { return next(err); }
-    if (!election) { return next(new Error('can\'t find election')); }
-    req.election = election;
-    return next();
+  query.lean()
+  .populate({'path':'races'})
+  .exec(function (err,docs){
+    var options = {
+      path:'races.candidates',
+      model: 'Candidate'
+    };
+    if(err) return res.json(500);
+    Election.populate(docs,options,function(err,elections){
+      res.json(elections);
+    });
+  //   election.races.populate('Candidate', {"path":"Candidate"},
+  //   //if (!election) { return next(new Error('can\'t find election')); }
+  //     function(err,election){ 
+  //       req.election = election;
+  //       return next();
+  // });
   });
 });
 
@@ -85,11 +97,9 @@ router.get('/elections', function(req, res, next) {
 })
 
 router.get('/elections/:election', function(req, res) {
-  req.election.populate('races')
-  .exec(function(err, election,races){
-    races.populate
+  req.election.populate('races', function(err, election,races){
     if (err) { return next(err); }
-  res.json(req.election);
+    res.json(req.election);
     });
   });
 

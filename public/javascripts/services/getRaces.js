@@ -5,7 +5,7 @@ var e = {
 return e;
 e.getRaces = function() {
     return $http.get('/elections').success(function(data){
-      angular.copy(data, e.election);
+      angular.copy(data, e.elections);
       console.log(data);
     });
   };

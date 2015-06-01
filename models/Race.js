@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 
 var RaceSchema = new mongoose.Schema({
-		raceId: mongoose.Schema.Types.ObjectId,
+		//raceId: mongoose.Schema.Types.ObjectId,
         raceName: String,
         seats: {type: Number, default: 0},
         precinctsRep: {type: Number, default: 0},

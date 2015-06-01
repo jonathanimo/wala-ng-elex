@@ -16,13 +16,13 @@ router.param('election', function(req, res, next, id) {
   var query = Election.findById(id);
   query.lean()
   .populate({'path':'races'})
-  .exec(function (err,docs){
+  .exec(function (err,elex){
     var options = {
       path:'races.candidates',
       model: 'Candidate'
     };
     if(err) return res.json(500);
-    Election.populate(docs,options,function(err,elections){
+    Election.populate(elex,options,function(err,elections){
       res.json(elections);
     });
   //   election.races.populate('Candidate', {"path":"Candidate"},

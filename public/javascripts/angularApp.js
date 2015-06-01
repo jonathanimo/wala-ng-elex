@@ -25,20 +25,30 @@ elexApp.config(['$stateProvider','$urlRouterProvider', function($stateProvider, 
       templateUrl: '/new-user.html',
       controller:  'RegistrationController'
     })
-    .state('election', {
-      url:'/election/{election}',
-      templateUrl: '/races.html',
-      controller:  'ElectionFrontEndController'
-      /*resolve: {
+    .state('allElections', {
+      url:'/elections',
+      templateUrl: '/election-select.html',
+      controller:  'ElectionSelectController',
+      resolve: {
         electionPromise: ['ElectionFactory', function(ElectionFactory){
-          return ElectionFactory.getRaces();
+          return ElectionFactory.getAll();
         }]
-      }*/
+      }
+    })
+    .state('oneElection', {
+      url:'/elections/{election}',
+      templateUrl: '/races.html',
+      controller:  'ElectionFrontEndController',
+      resolve: {
+        racesPromise: ['$stateParams','RacesFactory', function($stateParam, RacesFactory){
+          return RacesFactory.getRaces($stateParams.election)
+        }]
+      }
     })
     .state('update', {
       url:'/update',
       templateUrl: '/election-form.html',
       controller: 'ElectionBackEndController',
       });
-    $urlRouterProvider.otherwise('election');
+    $urlRouterProvider.otherwise('elections');
 }]);

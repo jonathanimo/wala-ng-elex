@@ -1,0 +1,10 @@
+	<section>
+	<body ng-controller="ElectionFrontEndController as ElexViewCtrl">
+		<h1 class="text-center">All Elections<br/></h1>
+			<section ng-repeat="e in  ElexViewCtrl.elections"  class="row text-center">
+				<h2 class="text-center">{{e.electionName}}</h2>
+				<h3>{{e.electionDate | date}}</h3>
+					</div>
+			</div><!-- elections -->
+		</div> <!-- container -->
+	</section>

@@ -1,18 +1,7 @@
-elexApp.controller('ElectionFrontEndController', function($scope,ElectionFactory,$stateParams,$location) {
-   	$scope.races = ElectionFactory.election[$stateParams.election];
-   	console.log($scope.races);
-   	console.log(ElectionFactory.election);
-
+elexApp.controller('ElectionFrontEndController', function($scope,RacesFactory/*,$http,$location*/) {
+    $scope.races = RacesFactory.races;
+    console.log($scope.races);
+    console.log(RacesFactory.races);
+    console.log(racesPromise);
 });
 
-
-//app.controller('RaceController', function () {});
-
-// $scope.getAll = function(){
-//    	 $http.get('js/races.json').success(function(data) { 
-// 	   	 	$scope.r = data; 
-// 	   	 });
-// 	   	}
-// 	   	$scope.getAll();
-
-//$scope.post = posts.posts[$stateParams.id];

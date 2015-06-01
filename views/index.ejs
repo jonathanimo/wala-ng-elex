@@ -17,9 +17,11 @@
 <!-- MY LOADS -->
 
   <script src="javascripts/angularApp.js"></script>
-  <script src="javascripts/controllers/registration.js"></script>
-  <script src="javascripts/services/authentication.js"></script>
+<!--   <script src="javascripts/controllers/registration.js"></script>
+  <script src="javascripts/services/authentication.js"></script> -->
+  <script src="javascripts/services/getAllElections.js"></script>
   <script src="javascripts/services/getRaces.js"></script>
+  <script src="javascripts/controllers/electionselect.js"></script>
   <script src="javascripts/controllers/backend.js"></script>
   <script src="javascripts/controllers/frontend.js"></script>
   <script src="javascripts/controllers/status.js"></script>
@@ -64,6 +66,18 @@
         ng-disabled="myform.$invalid">Login</button>
       <p>or <a href="#/register">register</a></p>
     </form>
+  </section>
+</script>
+<script type="text/ng-template" id="/election-select.html">
+  <section>
+  <body ng-controller="ElectionSelectController as ElexViewCtrl">
+    <h1 class="text-center">All Elections<br/></h1>
+      <section ng-repeat="e in elections"  class="row text-center">
+        <a ng-href="/elections/{{e._id}}"<h2 class="text-center">{{e.electionName}}</h2>
+        <h3>{{e.electionDate | date}}</h3>
+          </div>
+      </div>
+    </div> 
   </section>
 </script>
 <script type="text/ng-template" id="/election-form.html">

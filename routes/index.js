@@ -14,7 +14,7 @@ var Election = mongoose.model('Election');
 
 router.param('election', function(req, res, next, id) {
   var query = Election.findById(id);
-  query.lean()
+  query
   .populate({'path':'races'})
   .exec(function (err,elex){
     var options = {

@@ -73,7 +73,7 @@
   <body ng-controller="ElectionSelectController as ElexViewCtrl">
     <h1 class="text-center">All Elections<br/></h1>
       <section ng-repeat="e in elections"  class="row text-center">
-        <a ng-href="/elections/{{e._id}}"<h2 class="text-center">{{e.electionName}}</h2>
+        <a ng-href="#/elections/{{e._id}}"<h2 class="text-center">{{e.electionName}}</h2>
         <h3>{{e.electionDate | date}}</h3>
           </div>
       </div>
@@ -106,7 +106,7 @@
         <div class="form-group">
           <label for="allVotes">Total Votes</label>
           <input id="allVotes" type="number" disabled ng-model="r.totalVotes"/>
-          <button id="calcVotes" type="button" class="btn btn-primary">Calculate Total</button>
+          <button id="calcVotes" type="button" ng-click="updateAllVotes($index)" class="btn btn-primary">Calculate Total</button>
         </div>
         <div class="form-group">
           <label for="updatedTime">Last Update</label>
@@ -114,8 +114,8 @@
         </div>
         <h1>Candidates</h1>
         <div class="oneElexCands">
+        <button type="button" id="addCandidates_elex1" ng-click="addCandidate($index)" class="addCandidates btn btn-default">Add Candidate</button>
           <div class="oneCandidate form-group" ng-repeat="can in r.candidates">
-            <button type="button" id="addCandidates_elex1" ng-click="addCandidate()" class="addCandidates btn btn-default">Add Candidate</button>
             <label for="candidateId">Id</label>
               <input class="candidateId" type="number" ng-model="can.candidateId" disabled />
             <label for="candidateFirstName">First Name</label>
@@ -126,7 +126,7 @@
               <input id="candidateParty" ng-model="can.party" type="text" />
             <label for="candidateVotes">Votes</label>
               <input class="candidateVotes" ng-model="can.voteTotal" type="number" />
-            <button class="removeCandidate" type="button" class="btn btn-danger">Remove This Candidate</button>
+            <button class="removeCandidate" type="button" ng-click="removeCandidate()" class="btn btn-danger">Remove This Candidate</button>
           </div>
         </div>
         <button type="submit" onclick="" id="submitRace" class="btn btn-success" ng-disabled="myform.$invalid">Update race</button>
@@ -236,9 +236,9 @@
         color:green;}
     </style>
     <body ng-controller="ElectionFrontEndController as raceViewCtrl">
-      <h1 class="text-center">Tax Vote Election Results<br/>
+      <h1 class="text-center">{{election.electionName}}<br/>
       <small class="precints">PRECINTS REPORTING: <span>PRECINTSREPORTING</span></small><br/>
-      <small class="precints">UPDATED: <span>{{raceViewCtrl.r[0].updated | date}}</span></small>
+      <small class="precints">UPDATED: <span>{{election.electionDate | date}}</span></small>
       </h1>
         <section ng-repeat="r in races"  class="one_race row text-center">
           <h2 class="text-center">{{r.raceName}}<small>{{r.allVotes | number}}</small></h2>

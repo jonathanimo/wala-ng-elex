@@ -1,21 +1,22 @@
-elexApp.controller('ElectionBackEndController', function($scope){
+elexApp.controller('ElectionBackEndController', function($scope, RacesFactory){
 
-    $scope.addCandidate = function(){ //on add input button click
-        var canCount = $scope.r.candidates.length+1;
+    $scope.races = RacesFactory.races.races;
+    console.log($scope.races);
+    console.log(RacesFactory.races);
+
+    $scope.addCandidate = function(race){ //on add input button click
+        var canCount = $scope.races[race].candidates.length+1;
         console.log(canCount);
-        $scope.candidates.push({});
+        $scope.races[race].candidates.push({});
     };
-    $scope.removeCandidate = function(){ //user click on remove text
+    $scope.removeCandidate = function(candidate){ //user click on remove text
             if (confirm("Are you sure you want to delete ths candidate? \n THIS CANNOT BE UNDONE!")){ 
-                $(this)
-                .parent('div.oneCandidate')
-                .remove();
-                canCount--
             }
         };
-    $scope.updateAllVotes = function(){
-            {
-            this.allVotes += this.candidates[i].voteTotal;
+    $scope.updateAllVotes = function(race){
+        var theTotal = $scope.races[race].allVotes;
+        for (var i = $scope.races[race].candidates.length - 1; i >= 0; i--) {
+            theTotal += $scope.races[race].candidates[i].voteTotal;
         };
     }
    

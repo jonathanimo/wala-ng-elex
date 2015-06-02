@@ -40,15 +40,20 @@ elexApp.config(['$stateProvider','$urlRouterProvider', function($stateProvider, 
       templateUrl: '/races.html',
       controller:  'ElectionFrontEndController',
       resolve: {
-        racesPromise: ['$stateParams','RacesFactory', function($stateParam, RacesFactory){
+        racesPromise: ['$stateParams','RacesFactory', function($stateParams, RacesFactory){
           return RacesFactory.getRaces($stateParams.election)
         }]
       }
     })
-    .state('update', {
-      url:'/update',
+    .state('edit', {
+      url:'/edit/{election}',
       templateUrl: '/election-form.html',
       controller: 'ElectionBackEndController',
+      resolve: {
+        racesPromise: ['$stateParams','RacesFactory', function($stateParams, RacesFactory){
+          return RacesFactory.getRaces($stateParams.election)
+        }]
+      }
       });
     $urlRouterProvider.otherwise('elections');
 }]);

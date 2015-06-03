@@ -15,23 +15,11 @@ var Election = mongoose.model('Election');
 router.param('election', function(req, res, next, id) {
   var query = Election.findById(id);
   query
-  .populate({'path':'races'})
   .exec(function (err,elex){
-    var options = {
-      path:'races.candidates',
-      model: 'Candidate'
-    };
-    if(err) return res.json(500);
-    Election.populate(elex,options,function(err,elections){
-      res.json(elections);
-    });
-  //   election.races.populate('Candidate', {"path":"Candidate"},
-  //   //if (!election) { return next(new Error('can\'t find election')); }
-  //     function(err,election){ 
-  //       req.election = election;
-  //       return next();
-  // });
-  });
+    if (!elex) { return next(new Error('can\'t find election')); }
+        req.election = elex;
+        return next();
+   })
 });
 
 router.param('race', function(req, res, next, id) {
@@ -88,20 +76,49 @@ router.post('/elections/:election/race/:race/candidate', function(req, res, next
 
 /*************************************router GET requests***************************************************/
 router.get('/elections', function(req, res, next) {
-	Election.find(function(err, elections){
-    	if(err){ 
-    		return next(err); 
-    	}
-	res.json(elections);
-	});
-})
+	Election
+    .find(function(err, elex){
+    	if(err) return res.json(500); 
+	   })
+    .populate({path:'races', model:'Race'})
+    .exec(function(err,elex){
+      var options = {
+        path:'races.candidates',
+        model:'Candidate'
+      };
+      if(err) return res.json(500);
+      Election.populate(elex,options,function(err,electionsDone){
+          res.json(electionsDone)
+      });
+    })
+});
 
 router.get('/elections/:election', function(req, res) {
-  req.election.populate('races', function(err, election,races){
-    if (err) { return next(err); }
-    res.json(req.election);
-    });
-  });
+  var query = Election.findOne({'_id':req.election});
+  query
+  .find(function(err, elex){
+      if(err) return res.json(500); 
+     })
+    .populate({path:'races', model:'Race'})
+    .exec(function(err,elex){
+      var options = {
+        path:'races.candidates',
+        model:'Candidate'
+      };
+      if(err) return res.json(500);
+      Election.populate(elex,options,function(err,oneElectionDone){
+          res.json(oneElectionDone)
+      });
+    })
+
+  // req.election
+  //   .populate({path:'races',model:'Race'})
+  //   .exec(function(err, elex){
+  //   if (err) { return next(err); }
+  //   res.json(elex);
+  // });
+    //.exec
+});
 
 router.get('/elections/:election/race/:race', function(req, res) {
     req.race.populate('candidates', function(err, race) {

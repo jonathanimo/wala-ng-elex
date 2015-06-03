@@ -7,11 +7,11 @@ var r = {
 			return r.races = req.data;
 		});
 	}
-	r.addRace = function(id,races){
-		return $http.post('/elections/' + id + '/race/', races);
-	}
-	r.addCandidate = function(id,race,candidates){
-		return $http.post('/elections/' + id + '/race/' + race + '/candidate', candidates);
-	}
+	r.putRaces = function(id,race){
+		return $http.post('/elections/' + id + '/race', race)
+	};
+	r.putCandidates = function(race,candidates){
+		return $http.post('/elections/' + id + '/race/' + race + '/candidate', candidates)
+	};
 	return r;
 }]);

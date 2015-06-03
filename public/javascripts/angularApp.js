@@ -1,4 +1,4 @@
-var elexApp = angular.module('elexApp', ['ui.router','appControllers']);
+var elexApp = angular.module('elexApp', ['ui.router','restangular','appControllers']);
 
 var appControllers = angular.module('appControllers',
    [/*'RegistrationController', 'ElectionFrontEndController', 'ElectionBackEndController', 'StatusController'*/]);
@@ -56,4 +56,5 @@ elexApp.config(['$stateProvider','$urlRouterProvider', function($stateProvider, 
       }
       });
     $urlRouterProvider.otherwise('elections');
+
 }]);

@@ -1,8 +1,6 @@
-elexApp.controller('ElectionBackEndController', function($scope,$stateParams, RacesFactory){
-
-    $scope.races = RacesFactory.races.races;
-    console.log($scope.races);
-    console.log(RacesFactory.races);
+elexApp.controller('ElectionBackEndController', function($scope,$stateParams,Restangular,races){
+    original = races.races;
+    $scope.races = Restangular.copy(original);
     var raceCount = $scope.races.length;
 
     $scope.addCandidate = function(race){ //on add input button click
@@ -13,27 +11,24 @@ elexApp.controller('ElectionBackEndController', function($scope,$stateParams, Ra
         console.log(canCount);
     };
 
-    $scope.addRace = function(){
-        var currRaces = $scope.races;
-        //$scope.races.push({});
-        raceCount++;
-        console.log(raceCount);
-        console.log('addRace fired');
-    }
-    $scope.updateRace = function(){
-        if ($scope.raceName === "") {return;}
-        RacesFactory.putRaces(RacesFactory.races._id, {
-            raceName: $scope.raceName,
-            allVotes: $scope.allVotes,
-            //candidates: $scope.candidates,
-            precinctsRep : $scope.precinctsRep,
-            precinctsTotal : $scope.precinctsTotal,
-            seats : $scope.seats,
-            updated: Date.now()
-        }).success(function(race){
-            $scope.races.push(race);
+    // $scope.addRace = function(){
+    //     var currRaces = $scope.races;
+    //     //$scope.races.push({});
+    //     raceCount++;
+    //     console.log(raceCount);
+    //     console.log('addRace fired');
+    // }
+    
+    $scope.updateRace = function(oneRace){
+        var editRace = $scope.races;
+        console.log(editRace.getRestangularUrl());
+        if (editRace.raceName === "") {return;}
+        editRace.post("Race", original[oneRace]).then(function(){
+            console.log("Well done, " + original[oneRace]._id + "updated!"), function(){
+                console.log("fail");
+            }
         })
-        console.log('updateRace fired');
+        console.log('updateRace fired on' + original[oneRace]._id);
     }
 
 

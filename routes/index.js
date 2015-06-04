@@ -35,7 +35,7 @@ router.param('race', function(req, res, next, id) {
 /*************************************ROUTER POST REQUESTS***************************************************/
 
 /*********************************************POST ELECTION************************************************************/
-router.post('/elections', function(req, res, next) {
+router.post('/api/v1/elections', function(req, res, next) {
   var election = new Election(req.body);
   election.save(function(err, election){
     if(err){ return next(err); }
@@ -45,7 +45,7 @@ router.post('/elections', function(req, res, next) {
 
 
 /**********************************POST A RACE WITHIN SELECTED ELECTION**********************************/
-router.post('/elections/:election/race', function(req, res, next) {
+router.post('/api/v1/elections/:election/race', function(req, res, next) {
   var race = new Race(req.body);
   race.election = req.election;
   race.save(function(err, race){
@@ -60,7 +60,7 @@ router.post('/elections/:election/race', function(req, res, next) {
 
 /*********************************************POST A CANDIDATE WITHIN A RACE WITHIN AN ELECTION************************************************************/
 
-router.post('/elections/:election/race/:race/candidate', function(req, res, next) {
+router.post('/api/v1/elections/:election/race/:race/candidate', function(req, res, next) {
   var candidate = new Candidate(req.body);
   candidate.race = req.race;
   candidate.save(function(err, candidate){
@@ -75,7 +75,7 @@ router.post('/elections/:election/race/:race/candidate', function(req, res, next
 
 
 /*************************************router GET requests***************************************************/
-router.get('/elections', function(req, res, next) {
+router.get('/api/v1/elections', function(req, res, next) {
 	Election
     .find(function(err, elex){
     	if(err) return res.json(500); 
@@ -93,7 +93,7 @@ router.get('/elections', function(req, res, next) {
     })
 });
 
-router.get('/elections/:election', function(req, res) {
+router.get('/api/v1/elections/:election', function(req, res) {
   var query = Election.findOne({'_id':req.election});
   query
   .find(function(err, elex){
@@ -120,14 +120,14 @@ router.get('/elections/:election', function(req, res) {
     //.exec
 });
 
-router.get('/elections/:election/race/:race', function(req, res) {
+router.get('/api/v1/elections/:election/race/:race', function(req, res) {
     req.race.populate('candidates', function(err, race) {
     if (err) { return next(err); }
     res.json(req.race);
   });
 });
 
-router.get('/elections/:election/race/:race/candidates', function(req, res) {
+router.get('/api/v1/elections/:election/race/:race/candidates', function(req, res) {
     res.json(req.candidates);
 });
 

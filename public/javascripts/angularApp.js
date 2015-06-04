@@ -13,7 +13,7 @@ var appControllers = angular.module('appControllers',
   });
 }]);*/
 
-elexApp.config(['$stateProvider','$urlRouterProvider', function($stateProvider, $urlRouterProvider) {
+elexApp.config(['$stateProvider','$urlRouterProvider','RestangularProvider', function($stateProvider, $urlRouterProvider, RestangularProvider) {
   $stateProvider
     .state('login', {
       url:'/login',
@@ -30,9 +30,9 @@ elexApp.config(['$stateProvider','$urlRouterProvider', function($stateProvider, 
       templateUrl: '/election-select.html',
       controller:  'ElectionSelectController',
       resolve: {
-        electionPromise: ['ElectionFactory', function(ElectionFactory){
-          return ElectionFactory.getAll();
-        }]
+        elections: function(Restangular){
+          return Restangular.all('elections');
+        }
       }
     })
     .state('oneElection', {
@@ -40,9 +40,9 @@ elexApp.config(['$stateProvider','$urlRouterProvider', function($stateProvider, 
       templateUrl: '/races.html',
       controller:  'ElectionFrontEndController',
       resolve: {
-        racesPromise: ['$stateParams','RacesFactory', function($stateParams, RacesFactory){
-          return RacesFactory.getRaces($stateParams.election)
-        }]
+        races: function($stateParams, Restangular){
+          return Restangular.one('elections',$stateParams.election).get();
+        }
       }
     })
     .state('edit', {
@@ -50,11 +50,16 @@ elexApp.config(['$stateProvider','$urlRouterProvider', function($stateProvider, 
       templateUrl: '/election-form.html',
       controller: 'ElectionBackEndController',
       resolve: {
-        racesPromise: ['$stateParams','RacesFactory', function($stateParams, RacesFactory){
-          return RacesFactory.getRaces($stateParams.election)
-        }]
+        races: function($stateParams, Restangular){
+        return Restangular.one('elections',$stateParams.election).get();
+        }
       }
       });
     $urlRouterProvider.otherwise('elections');
+
+    RestangularProvider.setBaseUrl('/api/v1');
+    RestangularProvider.setRestangularFields({
+        id: '_id.ObjectId'
+    });
 
 }]);

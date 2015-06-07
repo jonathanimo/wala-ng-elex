@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 
 var ElectionSchema = new mongoose.Schema({
 	electionName: String,
-	electionDate: {type:Date, default: Date.now},
+	electionDate: {type:Date},
 	races: [{ type:mongoose.Schema.Types.ObjectId, ref: 'Race' }]
 });
 

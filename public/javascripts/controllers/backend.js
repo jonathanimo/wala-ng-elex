@@ -3,40 +3,74 @@ elexApp.controller('ElectionBackEndController', function($scope,$stateParams,Res
     var raceCount = $scope.races.length;
 
     $scope.addCandidate = function(race){ //on add input button click
-        var canCount = $scope.races[race].candidates.length;
-        $scope.races[race].candidates.push({});
-        //$scope.putCandidates($stateParams.id, $scope.races.candidates, )
-        canCount++;
-        console.log(canCount);
+        var newCan = {
+            firstName: "First name",
+            lastName: "Last Name",
+            party: "party"
+        };
+        var theRace = $scope.races[race]._id;
+        election.one('race',theRace).post('candidate', newCan).then(function(can){
+            $scope.races = election.getList('races').$object;
+        },function error(reason){
+            console.log(reason);
+        });
+        console.log(theRace);
     };
 
-     $scope.addRace = function(){
-         var currRaces = $scope.races;
-         $scope.races.push({});
-         raceCount++;
-     }
+    $scope.removeCandidate = function(race,candidate){ //user click on remove text
+        var deadCanId= $scope.races[race].candidates[candidate]._id;
+        var theRace = $scope.races[race]._id;
+        if (confirm("Are you sure you want to delete ths candidate? \n THIS CANNOT BE UNDONE!")){ 
+           election.one('race',theRace).one('candidate', deadCanId).remove().then(function(can){
+            $scope.races = election.getList('races').$object;
+        },function error(reason){
+            console.log(reason);
+        });
+        }
+        console.log(deadCanId);
+    };
+
+   
     
     $scope.updateElection = function(){
+       election.put().then(function(){
+            console.log(election);
+            $scope.races = election.getList('races').$object;
+        },function error(reason){
+            console.log(reason);
+        });
+    };
 
-    }
+    $scope.addRace = function(){
+        var name = prompt("Choose a race name.")
+         var newRace = {
+            raceName: name
+         }
+         election.post('race', newRace).then(function(race){
+            $scope.races = election.getList('races').$object;
+         },function error(reason){
+            console.log(reason);
+         });
+    };
 
     $scope.removeRace = function(race){
         var deadRaceId = $scope.races[race]._id;
-        election.one('races',deadRaceId).remove();
-    }
-
-    $scope.removeCandidate = function(race,candidate){ //user click on remove text
-        var deadCanId= $scope.races[race]._id;
-        if (confirm("Are you sure you want to delete ths candidate? \n THIS CANNOT BE UNDONE!")){ 
-            election.one('races',deadRaceId).remove();
+        if (confirm('Are you sure you want to delete this race? \n THIS CANNOT BE UNDONE')){
+            election.one('races',deadRaceId).remove().then(function(race){
+                $scope.races = election.getList('races').$object;
+            },function error(reason){
+                console.log(reason);
+            });
         }
-        };
+    };
+
     $scope.updateAllVotes = function(race){
-        var theTotal = $scope.races[race].allVotes;
+        var theTotal = $scope.races[race].allVotes,
+        candidates = $scope.races[race].candidates;
         for (var i = $scope.races[race].candidates.length - 1; i >= 0; i--) {
             theTotal += $scope.races[race].candidates[i].voteTotal;
         };
-    }
+    };
    
 
     // $scope.setPcts = function(){

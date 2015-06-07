@@ -88,15 +88,85 @@ router.delete('/api/v1/elections/:election', function(req,res,next){
         });
 })
 
-router.delete('/api/v1/elections/:election/races/:race/candidate/:candidate', function(req,res,next){
+router.delete('/api/v1/elections/:election/race/:race/candidate/:candidate', function(req,res,next){
       Candidate.remove({
-            _id: req.params.race
-        }, function(err, race) {
+            _id: req.params.candidate
+        }, function(err, candidate) {
             if (err)
             return res.send(err);
             res.json({ message: 'Successfully deleted' });
         });
 })
+
+router.put('/api/v1/elections/:election/races/:race', function(req, res) {
+
+        Race.findById(req.params.race, function(err, race) {
+
+            if (err)
+                res.send(err);
+
+            race.raceName = req.body.raceName;
+            race.seats = req.body.seats;
+            race.precinctsRep = req.body.precinctsRep;
+            race.precinctsTotal = req.body.precinctsTotal;
+            race.isOver = req.body.isOver;
+            race.allVotes = req.body.allVotes;
+            race.updated = Date.now();
+            race.candidates = req.body.candidates;
+
+            race.save(function(err) {
+                if (err)
+                    res.send(err);
+
+                res.json({ message: 'Updated!' });
+            });
+
+        });
+    });
+
+router.put('/api/v1/elections/:election', function(req, res) {
+
+        Election.findById(req.params.election, function(err, election) {
+
+            if (err)
+                res.send(err);
+
+            election.electionName = req.body.electionName;
+            election.races = req.body.races;
+
+            election.save(function(err) {
+                if (err)
+                    res.send(err);
+
+                res.json({ message: 'Updated!' });
+            });
+
+        });
+    });
+
+router.put('/api/v1/elections/:election/races/:race/candidate/:candidate', function(req, res) {
+
+        Candidate.findById(req.params.race, function(err, candidate) {
+
+            if (err)
+                res.send(err);
+
+            candidate.firstName = req.body.firstName;
+            candidate.lastName = req.body.lastName;
+            candidate.party = req.body.party;
+            candidate.voteTotal = req.body.voteTotal;
+            candidate.pctTotal = req.body.pctTotal;
+            candidate.races = req.body.races;
+
+            candidate.save(function(err) {
+                if (err)
+                    res.send(err);
+
+                res.json({ message: 'Updated!' });
+            });
+
+        });
+    });
 
 /*********************************************POST A CANDIDATE WITHIN A RACE WITHIN AN ELECTION************************************************************/
 

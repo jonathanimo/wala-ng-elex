@@ -112,7 +112,7 @@
         </div>
         <div class="form-group">
           <label for="updatedTime">Last Update</label>
-          <input id="updatedTime" type="text" disabled ng-model="r.updated | date"/>
+          <input id="updatedTime" type="text" disabled ng-model="r.updated"/>
         </div>
         <h1>Candidates</h1>
         <div class="oneElexCands">
@@ -128,7 +128,7 @@
               <input id="candidateParty" ng-model="can.party" type="text" />
             <label for="candidateVotes">Votes</label>
               <input class="candidateVotes" ng-model="can.voteTotal" type="number" />
-            <button class="removeCandidate" type="button" ng-click="removeCandidate()" class="btn btn-danger">Remove This Candidate</button>
+            <button class="removeCandidate" type="button" ng-click="removeCandidate($parent.$index,$index)" class="btn btn-danger">Remove This Candidate</button>
           </div>
         </div>
         </form>

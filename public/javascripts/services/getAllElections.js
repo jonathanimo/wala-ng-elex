@@ -1,13 +1,13 @@
-elexApp.factory('ElectionFactory', ['$http', function($http) {
-	var e = {
-		elections:[]
-	};
-
+elexApp.factory('ElectionFactory', ['Restangular', function(Restangular) {
+	var e = {};
 
 	e.getAll = function(){
-		return $http.get('/elections').success(function(data){
-			angular.copy(data, e.elections);
-		})
+		return Restangular.all('elections');
 	}
-		return e;	
+
+	e.getOne = function(election){
+		return Restangular.one('elections',election);
+	}
+		
+	return e;
 }]);

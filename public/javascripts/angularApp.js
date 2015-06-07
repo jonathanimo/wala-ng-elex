@@ -30,8 +30,8 @@ elexApp.config(['$stateProvider','$urlRouterProvider','RestangularProvider', fun
       templateUrl: '/election-select.html',
       controller:  'ElectionSelectController',
       resolve: {
-        elections: function(Restangular){
-          return Restangular.all('elections');
+        elections: function(Restangular,ElectionFactory){
+          return ElectionFactory.getAll();
         }
       }
     })
@@ -40,8 +40,8 @@ elexApp.config(['$stateProvider','$urlRouterProvider','RestangularProvider', fun
       templateUrl: '/races.html',
       controller:  'ElectionFrontEndController',
       resolve: {
-        races: function($stateParams, Restangular){
-          return Restangular.one('elections',$stateParams.election).get();
+        election: function($stateParams,Restangular,ElectionFactory){
+          return ElectionFactory.getOne($stateParams.election);
         }
       }
     })
@@ -50,8 +50,8 @@ elexApp.config(['$stateProvider','$urlRouterProvider','RestangularProvider', fun
       templateUrl: '/election-form.html',
       controller: 'ElectionBackEndController',
       resolve: {
-        races: function($stateParams, Restangular){
-        return Restangular.one('elections',$stateParams.election).get();
+        election: function($stateParams,Restangular,ElectionFactory){
+          return ElectionFactory.getOne($stateParams.election);
         }
       }
       });

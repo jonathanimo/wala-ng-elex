@@ -32,6 +32,16 @@ router.param('race', function(req, res, next, id) {
   });
 });
 
+router.param('candidate', function(req, res, next, id) {
+  var query = Candidate.findById(id);
+  query.exec(function (err, candidate){
+    if (err) { return next(err); }
+    if (!candidate) { return next(new Error('can\'t find candidate')); }
+    req.candidate = candidate;
+    return next();
+  });
+});
+
 /*************************************ROUTER POST REQUESTS***************************************************/
 
 /*********************************************POST ELECTION************************************************************/
@@ -58,6 +68,36 @@ router.post('/api/v1/elections/:election/race', function(req, res, next) {
   });
 });
 
+router.delete('/api/v1/elections/:election/races/:race', function(req,res,next){
+      Race.remove({
+            _id: req.params.race
+        }, function(err, race) {
+            if (err)
+            return res.send(err);
+            res.json({ message: 'Successfully deleted' });
+        });
+})
+
+router.delete('/api/v1/elections/:election', function(req,res,next){
+      Election.remove({
+            _id: req.params.race
+        }, function(err, race) {
+            if (err)
+            return res.send(err);
+            res.json({ message: 'Successfully deleted' });
+        });
+})
+
+router.delete('/api/v1/elections/:election/races/:race/candidate/:candidate', function(req,res,next){
+      Candidate.remove({
+            _id: req.params.race
+        }, function(err, race) {
+            if (err)
+            return res.send(err);
+            res.json({ message: 'Successfully deleted' });
+        });
+})
+
 /*********************************************POST A CANDIDATE WITHIN A RACE WITHIN AN ELECTION************************************************************/
 
 router.post('/api/v1/elections/:election/race/:race/candidate', function(req, res, next) {
@@ -72,6 +112,8 @@ router.post('/api/v1/elections/:election/race/:race/candidate', function(req, re
     });
   });
 });
+
+
 
 
 /*************************************router GET requests***************************************************/
@@ -120,14 +162,34 @@ router.get('/api/v1/elections/:election', function(req, res) {
     //.exec
 });
 
-router.get('/api/v1/elections/:election/race/:race', function(req, res) {
+router.get('/api/v1/elections/:election/races', function(req, res) {
+  var query = Election.findOne({'_id':req.election});
+  query
+  .find(function(err, elex){
+      if(err) return res.json(500); 
+     })
+    .populate({path:'races', model:'Race'})
+    .exec(function(err,elex){
+      var options = {
+        path:'races.candidates',
+        model:'Candidate'
+      };
+      if(err) return res.json(500);
+      Election.populate(elex,options,function(err,oneElectionDone){
+          res.json(oneElectionDone.races)
+      });
+    })
+
+});
+
+router.get('/api/v1/elections/:election/races/:race', function(req, res) {
     req.race.populate('candidates', function(err, race) {
     if (err) { return next(err); }
     res.json(req.race);
   });
 });
 
-router.get('/api/v1/elections/:election/race/:race/candidates', function(req, res) {
+router.get('/api/v1/elections/:election/races/:race/candidates', function(req, res) {
     res.json(req.candidates);
 });
 

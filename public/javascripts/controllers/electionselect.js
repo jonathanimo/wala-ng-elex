@@ -1,4 +1,4 @@
-elexApp.controller('ElectionSelectController', function($scope,Restangular,ElectionFactory) {
-    var baseElections = Restangular.all('elections').getList().$object;
+elexApp.controller('ElectionSelectController', function($scope,Restangular,ElectionFactory,elections) {
+    var baseElections = elections.getList().$object;
     $scope.elections = baseElections;
 });

@@ -83,6 +83,7 @@
 <script type="text/ng-template" id="/election-form.html">
  <button type="button" ng-click="addRace()" class="addRaces btn btn-default">Add Race</button>
   <section ng-repeat="r in races" class="new-elex">
+  <button class="removeRace" type="button" ng-click="removeRace($index)" class="btn btn-danger">Remove Race</button>
       <form class="oneElex" name="ElexForm1" id="elex1" novalidate>
         <div class="form-group">
           <label for="raceName">Race Name</label>
@@ -111,7 +112,7 @@
         </div>
         <div class="form-group">
           <label for="updatedTime">Last Update</label>
-          <input id="updatedTime" type="text" disabled ng-model="r.updated"/>
+          <input id="updatedTime" type="text" disabled ng-model="r.updated | date"/>
         </div>
         <h1>Candidates</h1>
         <div class="oneElexCands">
@@ -130,11 +131,10 @@
             <button class="removeCandidate" type="button" ng-click="removeCandidate()" class="btn btn-danger">Remove This Candidate</button>
           </div>
         </div>
-        <button ng-click="updateRace($index)" class="btn btn-success" >Update race</button>
         </form>
-
         <div id="updatedELection"></div>
   </section>
+  <button ng-click="updateElection()" class="btn btn-success" >Update</button>
 </script>
 <script type="text/ng-template" id="/new-user.html">
   <section class="register">

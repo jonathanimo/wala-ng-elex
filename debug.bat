@@ -1,0 +1,1 @@
+node ./bin/www DEBUG=wala-ng-elex

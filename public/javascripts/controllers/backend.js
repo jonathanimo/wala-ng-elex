@@ -32,14 +32,29 @@ elexApp.controller('ElectionBackEndController', function($scope,$stateParams,Res
 
    
     
-    $scope.updateElection = function(){
-       election.put().then(function(){
-            console.log(election);
-            $scope.races = election.getList('races').$object;
-        },function error(reason){
-            console.log(reason);
+    $scope.updateElection = function(e){
+        var races = election.all('races').getList().then(function(races){
+            for (var i = races.length - 1; i >= 0; i--) {
+                var candidates = races[i].candidates;
+                    for (var i = candidates.length - 1; i >= 0; i--) {
+                        console.log(candidate[i]);
+                       // election.one('race',r).save('candidate', candidates[i]._id).then(function(can)election.candidates[i]._id);
+                    };
+            };
         });
-    };
+        // then(function(races){
+        //     console.log(races.$object);
+        //     races.put().then(function(){
+        //         election.put().then(function(){
+        //             console.log(election);
+        //             $scope.races = election.getList('races').$object;
+        //         } , function error(reason){
+        //             console.log(reason);
+        //         }
+        //         );
+        //     });
+        // });
+    }
 
     $scope.addRace = function(){
         var name = prompt("Choose a race name.")

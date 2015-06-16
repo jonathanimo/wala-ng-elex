@@ -32,29 +32,27 @@ elexApp.controller('ElectionBackEndController', function($scope,$stateParams,Res
 
    
     
-    $scope.updateElection = function(e){
-        var races = election.all('races').getList().then(function(races){
-            for (var i = races.length - 1; i >= 0; i--) {
-                var candidates = races[i].candidates;
-                    for (var i = candidates.length - 1; i >= 0; i--) {
-                        console.log(candidate[i]);
-                       // election.one('race',r).save('candidate', candidates[i]._id).then(function(can)election.candidates[i]._id);
-                    };
+$scope.updateElection = function(){
+    var races = election.all('races').getList().then(function(races){
+        for (var i = races.length - 1; i >= 0; i--) {
+            var candidates = races[i].candidates;
+            var theRace = $scope.races[i];
+            for (var n = candidates.length - 1; n >= 0; n--) { //updates candidates on update
+                var theCan = $scope.races[i].candidates[n];
+                election.one('races',theRace._id).one('candidate', theCan._id).customPUT(theCan).then(function(can){
+                    $scope.races = election.getList('races').$object;
+                },function error(reason){
+                    console.log(reason);
+                });
             };
-        });
-        // then(function(races){
-        //     console.log(races.$object);
-        //     races.put().then(function(){
-        //         election.put().then(function(){
-        //             console.log(election);
-        //             $scope.races = election.getList('races').$object;
-        //         } , function error(reason){
-        //             console.log(reason);
-        //         }
-        //         );
-        //     });
-        // });
-    }
+            election.one('races',theRace._id).customPUT(theRace).then(function(race){
+                $scope.races = election.getList('races').$object;
+            },function error(reason){
+                console.log(reason);
+            });            
+        }
+    });
+};
 
     $scope.addRace = function(){
         var name = prompt("Choose a race name.")

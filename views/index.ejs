@@ -81,7 +81,7 @@
   </section>
 </script>
 <script type="text/ng-template" id="/election-form.html">
- <button type="button" ng-click="addRace()" class="addRaces btn btn-default">Add Race</button>
+ <button type="button" ng-click="addRace()" class="addRaces btn btn-default">Add Race</button><button ng-click="updateElection()" class="btn btn-success" >Update</button>
   <section ng-repeat="r in races" class="new-elex">
   <button class="removeRace" type="button" ng-click="removeRace($index)" class="btn btn-danger">Remove Race</button>
       <form class="oneElex" name="ElexForm1" id="elex1" novalidate>
@@ -134,7 +134,6 @@
         </form>
         <div id="updatedELection"></div>
   </section>
-  <button ng-click="updateElection()" class="btn btn-success" >Update</button>
 </script>
 <script type="text/ng-template" id="/new-user.html">
   <section class="register">

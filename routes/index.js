@@ -158,22 +158,12 @@ router.put('/api/v1/elections/:election', function(req, res) {
 
 router.put('/api/v1/elections/:election/races/:race/candidate/:candidate', function(req, res) {
 
-        Candidate.findById(req.params.race, function(err, candidate) {
-
+        Candidate.findById(req.params.candidate, function(err, candidate) {
             if (err)
                 res.send(err);
-
-            candidate.firstName = req.body.firstName;
-            candidate.lastName = req.body.lastName;
-            candidate.party = req.body.party;
-            candidate.voteTotal = req.body.voteTotal;
-            candidate.pctTotal = req.body.pctTotal;
-            candidate.races = req.body.races;
-
             candidate.save(function(err) {
                 if (err)
                     res.send(err);
-
                 res.json({ message: 'Updated!' });
             });
 

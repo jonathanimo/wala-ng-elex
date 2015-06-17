@@ -32,6 +32,7 @@ elexApp.controller('ElectionBackEndController', function($scope,$stateParams,Res
 
    
     
+<<<<<<< HEAD
 $scope.updateElection = function(){
     var races = election.all('races').getList().then(function(races){
         for (var i = races.length - 1; i >= 0; i--) {
@@ -53,6 +54,27 @@ $scope.updateElection = function(){
         }
     });
 };
+=======
+    $scope.updateElection = function(){
+        var races = election.all('races').getList().then(function(races){
+            for (var i = races.length - 1; i >= 0; i--) {
+                var candidates = races[i].candidates;
+                //console.log(candidates);
+                    for (var n = candidates.length - 1; n >= 0; n--) {
+                        var theRace = $scope.races[i]._id;
+                        var theCan = candidates[n];
+                        //console.log(theRace);
+                        election.one('races',theRace).one('candidate', theCan._id).put().then(function(can){
+                            $scope.races = election.getList('races').$object;
+                        },function error(reason){
+                            console.log(reason);
+                        });                        
+                        //election.one('race',r).save('candidate', candidates[i]._id).then(function(can)election.candidates[i]._id);
+                    };
+            }
+            });
+    };
+>>>>>>> 2733023df64f90dbaf3d7e945eae34581a628826
 
     $scope.addRace = function(){
         var name = prompt("Choose a race name.")

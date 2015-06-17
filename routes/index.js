@@ -161,7 +161,6 @@ router.put('/api/v1/elections/:election/races/:race/candidate/:candidate', funct
         Candidate.findById(req.params.candidate, function(err, candidate) {
             if (err)
                 res.send(err);
-<<<<<<< HEAD
             
             candidate.firstName = req.body.firstName;
             candidate.lastName = req.body.lastName;
@@ -169,8 +168,6 @@ router.put('/api/v1/elections/:election/races/:race/candidate/:candidate', funct
             candidate.voteTotal = req.body.voteTotal;
             candidate.pctTotal = req.body.pctTotal;
 
-=======
->>>>>>> 2733023df64f90dbaf3d7e945eae34581a628826
             candidate.save(function(err) {
                 if (err)
                     res.send(err);

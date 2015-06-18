@@ -1,5 +1,6 @@
 elexApp.controller('ElectionBackEndController', function($scope,$stateParams,Restangular,election){
     $scope.races = election.getList('races').$object;
+    $scope.ele = election.get().$object;
     var raceCount = $scope.races.length;
 
     $scope.addCandidate = function(race){ //on add input button click
@@ -14,7 +15,6 @@ elexApp.controller('ElectionBackEndController', function($scope,$stateParams,Res
         },function error(reason){
             console.log(reason);
         });
-        console.log(theRace);
     };
 
     $scope.removeCandidate = function(race,candidate){ //user click on remove text
@@ -27,7 +27,6 @@ elexApp.controller('ElectionBackEndController', function($scope,$stateParams,Res
             console.log(reason);
         });
         }
-        console.log(deadCanId);
     };
 
 
@@ -48,7 +47,6 @@ $scope.updateElection = function(){
                  });
             };
             theRace.allVotes = theTotal;
-             console.log(theRace.allVotes);
              election.one('races',theRace._id).customPUT(theRace).then(function(race){
                  $scope.races = election.getList('races').$object;
              },function error(reason){
@@ -56,6 +54,8 @@ $scope.updateElection = function(){
             });            
          }
      });
+    election.customPUT($scope.ele);
+    console.log($scope.ele);
  };
 
     $scope.addRace = function(){

@@ -13,6 +13,7 @@
   <script src="javascripts/lib/angular/angular-animate.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
   <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/restangular/1.3.1/restangular.min.js"></script>
+  <script type="text/javascript" src="javascripts/lib/ui-bootstrap-tpls-0.13.0.min.js"></script>
 <!-- END CDN LOADS -->
 <!-- MY LOADS -->
 
@@ -72,19 +73,33 @@
   <section>
   <body ng-controller="ElectionSelectController as ElexViewCtrl">
     <h1 class="text-center">All Elections<br/></h1>
-      <section ng-repeat="e in elections"  class="row text-center">
-        <a ng-href="#/elections/{{e._id}}"<h2 class="text-center">{{e.electionName}}</h2>
-        <h3>{{e.electionDate | date}}</h3>
-          </div>
-      </div>
-    </div> 
+    <button type="button" ng-click="newElection()" class="add btn btn-default">New Election</button>
+      <section ng-repeat="e in listElections"  class="row text-center elex">
+        <h2 class="text-center">
+        {{e.electionName}}
+        <small>{{e.electionDate | date}}</small></h2>
+        <h3><a class="label label-primary" ng-href="#/edit/{{e._id}}">Edit</a>
+        <a class="label label-info" ng-href="#/elections/{{e._id}}">Preview</a>
+        <a class="label label-success" ng-href="#/elections/{{e._id}}">Embed</a>
+        </h3>
+        <h4><button class="btn btn-danger" ng-click="removeElection($index)">DELETE</h4>
+      </section> 
   </section>
 </script>
 <script type="text/ng-template" id="/election-form.html">
- <button type="button" ng-click="addRace()" class="addRaces btn btn-default">Add Race</button><button ng-click="updateElection()" class="btn btn-success" >Update</button>
+<form class="oneElex" name="ElexForm1" id="elex1" novalidate>
+    <div class="form-group">
+              <label for="raceName">Precincts Reporting</label>
+              <input id="raceName" type="text" ng-model="ele.precinctsRep"/>
+    </div>
+    <div class="form-group">
+          <label for="raceName">Total Precincts</label>
+          <input id="raceName" type="text" ng-model="ele.precinctsTotal"/>
+    </div>
+
+ <button type="button" ng-click="addRace()" class="add btn btn-default">Add Race</button><button ng-click="updateElection()" class="btn btn-success" >Update</button>
   <section ng-repeat="r in races" class="new-elex">
   <button class="removeRace" type="button" ng-click="removeRace($index)" class="btn btn-danger">Remove Race</button>
-      <form class="oneElex" name="ElexForm1" id="elex1" novalidate>
         <div class="form-group">
           <label for="raceName">Race Name</label>
           <input id="raceName" type="text" ng-model="r.raceName"/>
@@ -94,21 +109,12 @@
           <input id="raceSeats" type="number"  ng-model="r.raceSeats"/>
         </div>
         <div class="form-group">
-          <label for="precinctsRep">Precincts Reporting</label>
-          <input id="precinctsRep" type="number" ng-model="r.precinctsRep" />
-        </div>
-        <div class="form-group">
-          <label for="precinctsTotal">Total Precincts</label>
-          <input id="precinctsTotal" type="text"  ng-model="r.precinctsTotal "/>
-        </div>
-        <div class="form-group">
           <label for="isOver">Is the race over?</label>
           <input id="isOver" type="checkbox"  ng-model="r.isOver"/>
         </div>
         <div class="form-group">
           <label for="allVotes">Total Votes</label>
           <input id="allVotes" type="number" disabled ng-model="r.allVotes"/>
-          <button id="calcVotes" type="button" ng-click="updateAllVotes($index)" class="btn btn-primary">Calculate Total</button>
         </div>
         <div class="form-group">
           <label for="updatedTime">Last Update</label>
@@ -131,8 +137,8 @@
             <button class="removeCandidate" type="button" ng-click="removeCandidate($parent.$index,$index)" class="btn btn-danger">Remove This Candidate</button>
           </div>
         </div>
-        </form>
         <div id="updatedELection"></div>
+      </form> 
   </section>
 </script>
 <script type="text/ng-template" id="/new-user.html">
@@ -195,22 +201,22 @@
         color:green;}
     </style>
     <body ng-controller="ElectionFrontEndController as raceViewCtrl">
-      <h1 class="text-center">{{election.electionName}}<br/>
-      <small class="precints">PRECINTS REPORTING: <span>PRECINTSREPORTING</span></small><br/>
-      <small class="precints">UPDATED: <span>{{election.electionDate | date}}</span></small>
+      <h1 class="text-center">{{elex.electionName}}<br/>
+      <small class="precints">PRECINTS REPORTING: <span>{{elex.precinctsRep}} / {{elex.precinctsTotal}}<span class="label label-info"> {{(elex.precinctsRep/elex.precinctsTotal) | percentage:1}}</span></span></small><br/>
+      <small class="precints">UPDATED: <span>{{elex.electionDate | date}}</span></small>
       </h1>
         <section ng-repeat="r in races"  class="one_race row text-center">
           <h2 class="text-center">{{r.raceName}}<small>{{r.allVotes | number}}</small></h2>
             <div class="candidates">
-              <div ng-repeat="candidate in r.candidates" class="one_cand col-sm-6">
+              <div ng-repeat="candidate in r.candidates | orderBy:'-voteTotal'" class="one_cand col-sm-6">
                 <div class="cand_name">
                   <h2>
-                    <STRONG>{{candidate.firstName + " " + candidate.lastName}}</STRONG><small>{{candidate.party}}</small>
+                    <STRONG>{{candidate.firstName + " " + candidate.lastName}}</STRONG><small> {{candidate.party}}</small>
                   </h2>
                 </div><!-- cand_name -->
                 <div class="percent progress">
-                    <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="{{candidate.pctTotal}}" aria-valuemin="0" aria-valuemax="100" ng-style="{'min-width': '2em', 'width': candidate.pctTotal+'%'}">
-                    {{candidate.pctTotal}}%
+                    <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="{{(candidate.voteTotal / r.allVotes)*100 | percentage:1 }}" aria-valuemin="0" aria-valuemax="100" ng-style="{'min-width': '2em', 'width': (candidate.voteTotal / r.allVotes | percentage:0) +'%'}">
+                    {{candidate.voteTotal / r.allVotes | percentage:0}}
                   </div>
                 </div><!-- .percent .progress -->
                 <div class="votes">

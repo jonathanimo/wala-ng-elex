@@ -1,7 +1,10 @@
 elexApp.controller('ElectionFrontEndController', function($scope,election) {
     $scope.races = election.getList('races').$object;
-    $scope.election = election.get().$object;
-    console.log($scope.races);
-    console.log(election);
+    election.get().then(function(el){
+            $scope.elex = el;
+            console.log($scope.elex);
+    },function error(reason){
+    	console.log(reason);
+    });
 });
 

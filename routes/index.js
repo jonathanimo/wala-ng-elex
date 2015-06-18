@@ -80,8 +80,8 @@ router.delete('/api/v1/elections/:election/races/:race', function(req,res,next){
 
 router.delete('/api/v1/elections/:election', function(req,res,next){
       Election.remove({
-            _id: req.params.race
-        }, function(err, race) {
+            _id: req.params.election
+        }, function(err, election) {
             if (err)
             return res.send(err);
             res.json({ message: 'Successfully deleted' });
@@ -126,8 +126,6 @@ router.put('/api/v1/elections/:election/races/:race', function(req, res) {
 
             race.raceName = req.body.raceName;
             race.seats = req.body.seats;
-            race.precinctsRep = req.body.precinctsRep;
-            race.precinctsTotal = req.body.precinctsTotal;
             race.isOver = req.body.isOver;
             race.allVotes = req.body.allVotes;
             race.updated = Date.now();
@@ -147,6 +145,13 @@ router.put('/api/v1/elections/:election', function(req, res) {
         Election.findById(req.params.election, function(err, election) {
             if (err)
                 res.send(err);
+
+            election.electionName = req.body.electionName;
+            election.electionDate = req.body.electionDate;
+            election.precinctsRep = req.body.precinctsRep;
+            election.precinctsTotal = req.body.precinctsTotal;
+            election.races = req.body.races;
+            
             election.save(function(err) {
                 if (err)
                     res.send(err);

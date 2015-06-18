@@ -1,17 +1,13 @@
-var elexApp = angular.module('elexApp', ['ui.router','restangular','appControllers']);
+var elexApp = angular.module('elexApp', ['ui.router','restangular','ui.bootstrap','appControllers']);
 
 var appControllers = angular.module('appControllers',
    [/*'RegistrationController', 'ElectionFrontEndController', 'ElectionBackEndController', 'StatusController'*/]);
 
-/*elexApp.run(['$rootScope', '$location', function($rootScope, $location) {
-  $rootScope.$on('$routeChangeError',
-  function(event, next, previous, error) {
-    if(error === 'AUTH_REQUIRED') {
-      $rootScope.message='Sorry, you must log in to access that page';
-      $location.path('/login');
-    }
-  });
-}]);*/
+elexApp.filter('percentage', ['$filter', function ($filter) {
+  return function (input, decimals) {
+    return $filter('number')(input * 100, decimals) + '%';
+  };
+}]);
 
 elexApp.config(['$stateProvider','$urlRouterProvider','RestangularProvider', function($stateProvider, $urlRouterProvider, RestangularProvider) {
   $stateProvider

@@ -2,7 +2,7 @@ elexApp.controller('ElectionSelectController', function($scope,Restangular,Elect
     var baseElections = elections.getList().$object;
     $scope.listElections = baseElections;
     $scope.newElection = function(){
-        var name = prompt("Choose a race name.")
+        var name = prompt("Choose an election name.")
          var newElex = {
             electionName:name
          }

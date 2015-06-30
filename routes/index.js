@@ -147,7 +147,7 @@ router.put('/api/v1/elections/:election', function(req, res) {
                 res.send(err);
 
             election.electionName = req.body.electionName;
-            election.electionDate = req.body.electionDate;
+            election.electionDate = Date.now();
             election.precinctsRep = req.body.precinctsRep;
             election.precinctsTotal = req.body.precinctsTotal;
             election.races = req.body.races;

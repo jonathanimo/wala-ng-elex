@@ -1,7 +1,9 @@
-elexApp.controller('ElectionBackEndController', function($scope,$stateParams,Restangular,election){
+elexApp.controller('ElectionBackEndController', function($scope,$stateParams,$http,Restangular,election,auth){
+    
     var rand = new Chance();
     $scope.ele = election.get().$object;
     $scope.races = election.getList('races').$object;
+    var authHeader = "{Authorization: Bearer " + auth.getToken() + "}";
     // election.get().then(function(e){
     //     $scope.ele = e;
     //     $scope.races = e.races;
@@ -27,7 +29,7 @@ elexApp.controller('ElectionBackEndController', function($scope,$stateParams,Res
         };
         $scope.updateElection();
         var theRace = $scope.races[race]._id;
-        election.one('race',theRace).post('candidate', newCan).then(function(can){
+        election.one('race',theRace).withHttpConfig(authHeader).post('candidate', newCan).then(function(can){
             $scope.races = election.getList('races').$object;
         },function error(reason){
             console.log(reason);
@@ -39,7 +41,7 @@ elexApp.controller('ElectionBackEndController', function($scope,$stateParams,Res
         var theRace = $scope.races[race]._id;
         if (confirm("Are you sure you want to delete ths candidate? \n THIS CANNOT BE UNDONE!")){
             $scope.updateElection();
-            election.one('race',theRace).one('candidate', deadCanId).remove().then(function(can){
+            election.one('race',theRace).one('candidate', deadCanId).withHttpConfig(authHeader).remove().then(function(can){
             $scope.races = election.getList('races').$object;
         },function error(reason){
             console.log(reason);
@@ -57,27 +59,27 @@ $scope.updateElection = function(){
                 var theCan = $scope.races[i].candidates[n];
                 var canVotes = parseInt(theCan.voteTotal);
                 theTotal += canVotes;
-                election.one('races',theRace._id).one('candidate', theCan._id).customPUT(theCan).then(function(can){
+                election.one('races',theRace._id).one('candidate', theCan._id).withHttpConfig(authHeader).customPUT(theCan).then(function(can){
                 },function error(reason){
                     console.log(reason);
                 });
             };
             theRace.allVotes = theTotal;
            
-            election.one('races',theRace._id).customPUT(theRace).then(function(race){
+            election.one('races',theRace._id).withHttpConfig(authHeader).customPUT(theRace).then(function(race){
                 //$scope.races = election.getList('races').$object;
             },function error(reason){
                 console.log(reason);
             });            
         }
-        election.customPUT($scope.ele).then(function(e){
+        election.withHttpConfig(authHeader).customPUT($scope.ele).then(function(e){
             $scope.ele = election.get().$object;
          },function error(reason){
              console.log(reason);
         }); 
     }
     else{
-        election.customPUT($scope.ele).then(function(e){
+        election.withHttpConfig(authHeader).customPUT($scope.ele).then(function(e){
             $scope.ele = election.get().$object;
             $scope.races = election.getList('races').$object;
         },function error(reason){
@@ -93,7 +95,7 @@ $scope.updateElection = function(){
             raceName: rand.string()
          }
          $scope.updateElection();
-         election.post('race', newRace).then(function(race){
+         election.withHttpConfig(authHeader).post('race', newRace).then(function(race){
             $scope.races = election.getList('races').$object;
          },function error(reason){
             console.log(reason);
@@ -104,7 +106,7 @@ $scope.updateElection = function(){
         var deadRaceId = $scope.races[race]._id;
         if (confirm('Are you sure you want to delete this race? \n THIS CANNOT BE UNDONE')){
             $scope.updateElection();
-            election.one('races',deadRaceId).remove().then(function(race){
+            election.one('races',deadRaceId).withHttpConfig(authHeader).remove().then(function(race){
                 $scope.races = election.getList('races').$object;
                 if ($scope.races.length === 0) {
                     $scope.activeRace = "waiting";

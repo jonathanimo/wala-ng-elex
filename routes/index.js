@@ -1,15 +1,28 @@
 var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
+var passport = require('passport');
+var jwt = require('express-jwt');
+
+
+
+//json web token middleware
+var auth = jwt({secret: 'SECRET', userProperty: 'payload'});
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
+//models for portions of elections
 var Candidate = mongoose.model('Candidate');
 var Race = mongoose.model('Race');
 var Election = mongoose.model('Election');
+
+//user model for authentication
+var User = mongoose.model('User');
+
+
 /*************************************router parameters***************************************************/
 
 router.param('election', function(req, res, next, id) {
@@ -45,7 +58,7 @@ router.param('candidate', function(req, res, next, id) {
 /*************************************ROUTER POST REQUESTS***************************************************/
 
 /*********************************************POST ELECTION************************************************************/
-router.post('/api/v1/elections', function(req, res, next) {
+router.post('/api/v1/elections',auth, function(req, res, next) {
   var election = new Election(req.body);
   election.save(function(err, election){
     if(err){ return next(err); }
@@ -55,7 +68,7 @@ router.post('/api/v1/elections', function(req, res, next) {
 
 
 /**********************************POST A RACE WITHIN SELECTED ELECTION**********************************/
-router.post('/api/v1/elections/:election/race', function(req, res, next) {
+router.post('/api/v1/elections/:election/race',auth, function(req, res, next) {
   var race = new Race(req.body);
   race.election = req.election;
   race.save(function(err, race){
@@ -68,7 +81,7 @@ router.post('/api/v1/elections/:election/race', function(req, res, next) {
   });
 });
 
-router.delete('/api/v1/elections/:election/races/:race', function(req,res,next){
+router.delete('/api/v1/elections/:election/races/:race',auth, function(req,res,next){
       Race.remove({
             _id: req.params.race
         }, function(err, race) {
@@ -78,7 +91,7 @@ router.delete('/api/v1/elections/:election/races/:race', function(req,res,next){
         });
 })
 
-router.delete('/api/v1/elections/:election', function(req,res,next){
+router.delete('/api/v1/elections/:election',auth, function(req,res,next){
       Election.remove({
             _id: req.params.election
         }, function(err, election) {
@@ -88,7 +101,7 @@ router.delete('/api/v1/elections/:election', function(req,res,next){
         });
 })
 
-router.delete('/api/v1/elections/:election/race/:race/candidate/:candidate', function(req,res,next){
+router.delete('/api/v1/elections/:election/race/:race/candidate/:candidate',auth, function(req,res,next){
       Candidate.remove({
             _id: req.params.candidate
         }, function(err, candidate) {
@@ -117,7 +130,7 @@ router.delete('/api/v1/elections/:election/race/:race/candidate/:candidate', fun
 //     });
 //   })
 
-router.put('/api/v1/elections/:election/races/:race', function(req, res) {
+router.put('/api/v1/elections/:election/races/:race',auth, function(req, res) {
 
         Race.findById(req.params.race, function(err, race) {
 
@@ -141,7 +154,7 @@ router.put('/api/v1/elections/:election/races/:race', function(req, res) {
         });
     });
 
-router.put('/api/v1/elections/:election', function(req, res) {
+router.put('/api/v1/elections/:election',auth, function(req, res) {
         Election.findById(req.params.election, function(err, election) {
             if (err)
                 res.send(err);
@@ -161,7 +174,7 @@ router.put('/api/v1/elections/:election', function(req, res) {
         });
     });
 
-router.put('/api/v1/elections/:election/races/:race/candidate/:candidate', function(req, res) {
+router.put('/api/v1/elections/:election/races/:race/candidate/:candidate',auth, function(req, res) {
 
         Candidate.findById(req.params.candidate, function(err, candidate) {
             if (err)
@@ -184,7 +197,7 @@ router.put('/api/v1/elections/:election/races/:race/candidate/:candidate', funct
 
 /*********************************************POST A CANDIDATE WITHIN A RACE WITHIN AN ELECTION************************************************************/
 
-router.post('/api/v1/elections/:election/race/:race/candidate', function(req, res, next) {
+router.post('/api/v1/elections/:election/race/:race/candidate',auth, function(req, res, next) {
   var candidate = new Candidate(req.body);
   candidate.race = req.race;
   candidate.save(function(err, candidate){
@@ -276,5 +289,42 @@ router.get('/api/v1/elections/:election/races/:race', function(req, res) {
 router.get('/api/v1/elections/:election/races/:race/candidates', function(req, res) {
     res.json(req.candidates);
 });
+
+/********************************************AUTHENTICATION ROUTES*************************************************/
+
+router.post('/register', function(req, res, next){
+  if(!req.body.username || !req.body.password){
+    return res.status(400).json({message: 'Please fill out all fields'});
+  }
+
+  var user = new User();
+
+  user.username = req.body.username;
+
+  user.setPassword(req.body.password)
+
+  user.save(function (err){
+    if(err){ return next(err); }
+
+    return res.json({token: user.generateJWT()})
+  });
+});
+
+router.post('/login', function(req, res, next){
+  if(!req.body.username || !req.body.password){
+    return res.status(400).json({message: 'Please fill out all fields'});
+  }
+
+  passport.authenticate('local', function(err, user, info){
+    if(err){ return next(err); }
+
+    if(user){
+      return res.json({token: user.generateJWT()});
+    } else {
+      return res.status(401).json(info);
+    }
+  })(req, res, next);
+});
+
 
 module.exports = router;

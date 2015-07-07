@@ -11,16 +11,6 @@ elexApp.filter('percentage', ['$filter', function ($filter) {
 
 elexApp.config(['$stateProvider','$urlRouterProvider','RestangularProvider', function($stateProvider, $urlRouterProvider, RestangularProvider) {
   $stateProvider
-    .state('login', {
-      url:'/login',
-      templateUrl: 'login.html',
-      controller:  'RegistrationController'
-    })
-    .state('register', {
-      url:'/register',
-      templateUrl: '/new-user.html',
-      controller:  'RegistrationController'
-    })
     .state('allElections', {
       url:'/elections',
       templateUrl: '/election-select.html',
@@ -47,12 +37,33 @@ elexApp.config(['$stateProvider','$urlRouterProvider','RestangularProvider', fun
       controller: 'ElectionBackEndController',
       resolve: {
         election: function($stateParams,Restangular,ElectionFactory){
-          return ElectionFactory.getOne($stateParams.election);
+          return ElectionFactory.getOneToEdit($stateParams.election);
         }
       }
-      });
+    })
+    .state('login', {
+      url: '/login',
+      templateUrl: '/login.html',
+      controller: 'AuthCtrl',
+      onEnter: ['$state', 'auth', function($state, auth){
+        if(auth.isLoggedIn()){
+          $state.go('allElections');
+        }
+      }]
+    })
+    .state('register', {
+      url: '/register',
+      templateUrl: '/register.html',
+      controller: 'AuthCtrl',
+      onEnter: ['$state', 'auth', function($state, auth){
+        if(auth.isLoggedIn()){
+          $state.go('allElections');
+        }
+      }]
+    })
     $urlRouterProvider.otherwise('elections');
-
+    //TODO Make this work with restangular
+    //RestangularProvider.setDefaultHeaders({Authorization: 'Bearer ' + auth.getToken()})
     RestangularProvider.setBaseUrl('/api/v1');
     RestangularProvider.setRestangularFields({
         id: '_id.ObjectId'

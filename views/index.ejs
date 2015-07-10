@@ -19,22 +19,31 @@
 <!-- END CDN LOADS -->
 <!-- MY LOADS -->
 
-
   <script src="javascripts/angularApp.js"></script>
   <script src="javascripts/controllers/authorization.js"></script>
   <script src="javascripts/services/authentication.js"></script>
   <script src="javascripts/services/getAllElections.js"></script>
+  <script src="javascripts/controllers/nav.js"></script>
   <!-- <script src="javascripts/services/getRaces.js"></script> -->
   <script src="javascripts/controllers/electionselect.js"></script>
   <script src="javascripts/controllers/backend.js"></script>
   <script src="javascripts/controllers/frontend.js"></script>
   <script src="javascripts/controllers/status.js"></script>
 
+
   <!-- END MY LOADS -->
 </head>
 <body>
 <header>
 </header>
+  <nav class="navbar navbar-default pull-right" ng-controller="NavCtrl">
+    <ul class="nav navbar-nav">
+      <li ng-show="isLoggedIn()"><a>{{ currentUser() }}</a></li>
+      <li ng-show="isLoggedIn()"><a href="" ng-click="logOut()">Log Out</a></li>
+      <li ng-hide="isLoggedIn()"><a href="/#/login">Log In</a></li>
+      <li ng-hide="isLoggedIn()"><a href="/#/register">Register</a></li>
+    </ul>
+  </nav>
 <div class="page">
   <div class="userinfo" 
     ng-controller="StatusController" ng-show="currentUser">

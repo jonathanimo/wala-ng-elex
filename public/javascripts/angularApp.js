@@ -1,4 +1,9 @@
-var elexApp = angular.module('elexApp', ['ui.router','restangular','ui.bootstrap','appControllers']);
+var elexApp = angular.module('elexApp', [
+  'ui.router',
+  'restangular',
+  'ui.bootstrap',
+  'appControllers'
+  ]);
 
 var appControllers = angular.module('appControllers',
    [/*'RegistrationController', 'ElectionFrontEndController', 'ElectionBackEndController', 'StatusController'*/]);
@@ -9,7 +14,11 @@ elexApp.filter('percentage', ['$filter', function ($filter) {
   };
 }]);
 
-elexApp.config(['$stateProvider','$urlRouterProvider','RestangularProvider', function($stateProvider, $urlRouterProvider, RestangularProvider) {
+elexApp.config([
+  '$stateProvider',
+  '$urlRouterProvider',
+  'RestangularProvider',
+  function($stateProvider, $urlRouterProvider, RestangularProvider) {
   $stateProvider
     .state('allElections', {
       url:'/elections',
@@ -63,7 +72,6 @@ elexApp.config(['$stateProvider','$urlRouterProvider','RestangularProvider', fun
     })
     $urlRouterProvider.otherwise('elections');
     //TODO Make this work with restangular
-    //RestangularProvider.setDefaultHeaders({Authorization: 'Bearer ' + auth.getToken()})
     RestangularProvider.setBaseUrl('/api/v1');
     RestangularProvider.setRestangularFields({
         id: '_id.ObjectId'

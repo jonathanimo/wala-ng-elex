@@ -1,4 +1,4 @@
-elexApp.factory('auth', ['$http', '$window', function($http, $window){
+elexApp.factory('auth', ['Restangular','$http', '$window', function(Restangular,$http, $window){
   var auth = {};
     auth.saveToken = function (token){
       $window.localStorage['ng-elex-token'] = token;
@@ -12,7 +12,7 @@ elexApp.factory('auth', ['$http', '$window', function($http, $window){
 
     if(token){
       var payload = JSON.parse($window.atob(token.split('.')[1]));
-
+      Restangular.setDefaultHeaders({Authorization: 'Bearer '  + token});
       return payload.exp > Date.now() / 1000;
     } else {
       return false;
@@ -40,7 +40,8 @@ elexApp.factory('auth', ['$http', '$window', function($http, $window){
 
   auth.logOut = function(){
     $window.localStorage.removeItem('ng-elex-token');
+    location.reload(true);
   };
-
+  //RestangularProvider.setDefaultHeaders({Authorization: Bearer " + auth.getToken() + "});
   return auth;
 }])

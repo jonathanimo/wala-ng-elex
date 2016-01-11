@@ -1,0 +1,9 @@
+install node
+install mongodb
+
+
+npm install
+
+
+mongod (if denied, make data/db directory)
+node ./bin/www DEBUG=wala-ng-elex OR npm start

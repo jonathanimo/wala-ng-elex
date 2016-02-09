@@ -230,21 +230,21 @@
     </style>
     <body ng-controller="ElectionFrontEndController as raceViewCtrl">
       <h1 class="text-center">{{elex.electionName}}<br/>
-      <small class="precints">PRECINTS REPORTING: <span>{{elex.precinctsRep}} / {{elex.precinctsTotal}}<span class="label label-info"> {{(elex.precinctsRep/elex.precinctsTotal) | percentage:1}}</span></span></small><br/>
+      <small class="precints">PRECINTS REPORTING: <span>{{elex.precinctsRep}} / {{elex.precinctsTotal}}<span class="label label-info"> {{(elex.precinctsRep/elex.precinctsTotal) | percentage:1}} %</span></span></small><br/>
       <small class="precints">UPDATED: <span>{{elex.electionDate | date}}</span></small>
       </h1>
         <section ng-repeat="r in races"  class="one_race row text-center">
-          <h2 class="text-center">{{r.raceName}}<small>{{r.allVotes | number}}</small></h2>
+          <h2 class="text-center">{{r.raceName}} <small>{{r.allVotes | number}} votes counted</small></h2>
             <div class="candidates">
               <div ng-repeat="candidate in r.candidates | orderBy:'-voteTotal'" class="one_cand col-sm-6">
                 <div class="cand_name">
-                  <h2>
+                  <h3>
                     <STRONG>{{candidate.firstName + " " + candidate.lastName}}</STRONG><small> {{candidate.party}}</small>
-                  </h2>
+                  </h3>
                 </div><!-- cand_name -->
                 <div class="percent progress">
-                    <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="{{(candidate.voteTotal / r.allVotes)*100 | percentage:1 }}" aria-valuemin="0" aria-valuemax="100" ng-style="{'min-width': '2em', 'width': (candidate.voteTotal / r.allVotes | percentage:0) +'%'}">
-                    {{candidate.voteTotal / r.allVotes | percentage:0}}
+                    <div class="progress-bar progress-bar-danger percentage-bar" role="progressbar" aria-valuenow="{{(candidate.voteTotal / r.allVotes)*100 | percentage:1 }}" aria-valuemin="0" aria-valuemax="100" ng-style="{'min-width': '2em', 'width': (candidate.voteTotal / r.allVotes | percentage:0) +'%'}">
+                    {{candidate.voteTotal / r.allVotes | percentage:0}} %
                   </div>
                 </div><!-- .percent .progress -->
                 <div class="votes">

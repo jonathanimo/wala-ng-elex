@@ -27,9 +27,18 @@ elexApp.factory('auth', ['Restangular','$http', '$window', function(Restangular,
     }
   };
   auth.register = function(user){
-    return $http.post('/register', user).success(function(data){
-      auth.saveToken(data.token);
-    });
+    var name = user.username;
+    console.log(user.username);
+    if(name.includes('@cbs46.com')){
+      return $http.post('/register', user).success(function(data){
+        auth.saveToken(data.token);
+      });
+    }
+    else{
+      return false;
+      console.log(user);
+      console.log('something went wrong');
+    }
   };
 
   auth.logIn = function(user){

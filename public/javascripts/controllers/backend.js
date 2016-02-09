@@ -146,7 +146,7 @@ elexApp.controller('ElectionBackEndController', function($scope,$stateParams,$ht
     $scope.addRace = function(){
         var name = prompt("Choose a race name.")
          var newRace = {
-            raceName: rand.string()
+            raceName: name
          }
          $scope.updateElection();
          election.post('race', newRace).then(function(race){

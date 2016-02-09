@@ -3,7 +3,15 @@ install mongodb
 
 
 npm install
+will install express and angular
 
 
-mongod (if denied, make data/db directory)
-node ./bin/www DEBUG=wala-ng-elex OR npm start
+mongod (if denied, make data/db directory) start with proper permissions
+
+start with debug
+node ./bin/www DEBUG=wala-ng-elex 
+
+OR 
+
+Start normally
+npm start

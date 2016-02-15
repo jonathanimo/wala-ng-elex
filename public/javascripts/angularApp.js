@@ -60,6 +60,24 @@ elexApp.config([
         }
       }]
     })
+    .state('forgot', {
+      url: '/forgot',
+      templateUrl: '/forgot.html',
+      controller: 'ResetCtrl',
+      onEnter: ['$state', 'auth', function($state){
+
+      }]
+    })
+    .state('reset', {
+      url: '/reset/{token}',
+      templateUrl: '/reset.html',
+      controller: 'ResetCtrl',
+      resolve: {
+        reset: function($stateParams, Restangular){
+       
+      }
+    }
+    })
     .state('register', {
       url: '/register',
       templateUrl: '/register.html',

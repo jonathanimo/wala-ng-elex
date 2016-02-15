@@ -2,30 +2,28 @@ var mongoose = require('mongoose');
 var crypto = require('crypto');
 var jwt = require('jsonwebtoken');
 
-var UserSchema = new mongoose.Schema({
+var TempUserSchema = new mongoose.Schema({
   username: {type: String, lowercase: true, unique: true},
   hash: String,
   salt: String,
-  email: {type: String, lowercase: true, unique: true, required:true},
-  resetPasswordToken: String,
-  resetPasswordExpires: Date
+  GENERATED_VERIFYING_URL: String
 });
 
-UserSchema.methods.checkDomain = function(username){
+TempUserSchema.methods.checkDomain = function(username){
 
 };
 
-UserSchema.methods.setPassword = function(password){
+TempUserSchema.methods.setPassword = function(password){
   this.salt = crypto.randomBytes(16).toString('hex');
   this.hash = crypto.pbkdf2Sync(password, this.salt, 1000, 64).toString('hex');
 };
 
-UserSchema.methods.validPassword = function(password) {
+TempUserSchema.methods.validPassword = function(password) {
   var hash = crypto.pbkdf2Sync(password, this.salt, 1000, 64).toString('hex');
   return this.hash === hash;
 };
 
-UserSchema.methods.generateJWT = function() {
+TempUserSchema.methods.generateJWT = function() {
 
   // set expiration to 60 days
   var today = new Date();
@@ -39,4 +37,4 @@ UserSchema.methods.generateJWT = function() {
   }, 'SECRET');
 };
 
-mongoose.model('User', UserSchema);
+mongoose.model('TempUser', TempUserSchema);

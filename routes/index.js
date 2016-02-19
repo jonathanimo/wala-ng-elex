@@ -209,7 +209,7 @@ router.post('/api/v1/elections/:election/race/:race/candidate',auth, function(re
     });
   });
 });
-
+//returns 400 bad request on post
 router.post('/forgot', function(req, res, next) {
   async.waterfall([
     function(done) {
@@ -221,7 +221,6 @@ router.post('/forgot', function(req, res, next) {
     function(token, done) {
       User.findOne({ email: req.body.email }, function(err, user) {
         if (!user) {
-          req.message('error', 'No account with that email address exists.');
           return res.redirect('/forgot');
         }
 
@@ -346,17 +345,12 @@ router.post('/register', function(req, res, next){
   if(!req.body.username || !req.body.password || !req.body.email){
     return res.status(400).json({message: 'Please fill out all fields'});
   }
-
   var user = new User();
-
   user.username = req.body.username;
   user.email = req.body.email;
-
   user.setPassword(req.body.password)
-
   user.save(function (err){
-    if(err){ return next(err); }
-
+  if(err){ return next(err); }
     return res.json({token: user.generateJWT()})
   });
 });
@@ -364,7 +358,6 @@ router.post('/register', function(req, res, next){
 
 router.get('/forgot', function(req, res) {
   res.render('forgot', {
-    user: req.user
   });
 });
 

@@ -29,16 +29,9 @@ elexApp.factory('auth', ['Restangular','$http', '$window', function(Restangular,
   auth.register = function(user){
     var name = user.username;
     console.log(user.username);
-    if(name.includes('@cbs46.com')){
-      return $http.post('/register', user).success(function(data){
-        auth.saveToken(data.token);
-      });
-    }
-    else{
-      return false;
-      console.log(user);
-      console.log('something went wrong');
-    }
+    return $http.post('/register', user).success(function(data){
+      auth.saveToken(data.token);
+    });
   };
 
   auth.logIn = function(user){
@@ -50,6 +43,16 @@ elexApp.factory('auth', ['Restangular','$http', '$window', function(Restangular,
   auth.logOut = function(){
     $window.localStorage.removeItem('ng-elex-token');
     location.reload(true);
+  };
+
+  //returns 400 bad request on post
+  auth.forgotPw = function(email){
+    return $http.post('/forgot', email).success(function(data){
+    console.log('done');
+    });
+  };
+  auth.resetPw = function(){
+
   };
   //RestangularProvider.setDefaultHeaders({Authorization: Bearer " + auth.getToken() + "});
   return auth;

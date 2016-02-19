@@ -63,7 +63,7 @@ elexApp.config([
     .state('forgot', {
       url: '/forgot',
       templateUrl: '/forgot.html',
-      controller: 'ResetCtrl',
+      controller: 'AuthCtrl',
       onEnter: ['$state', 'auth', function($state){
 
       }]
@@ -71,7 +71,7 @@ elexApp.config([
     .state('reset', {
       url: '/reset/{token}',
       templateUrl: '/reset.html',
-      controller: 'ResetCtrl',
+      controller: 'AuthCtrl',
       resolve: {
         reset: function($stateParams, Restangular){
        

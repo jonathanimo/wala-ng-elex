@@ -9,7 +9,6 @@ elexApp.factory('auth', ['Restangular','$http', '$window', function(Restangular,
     }
   auth.isLoggedIn = function(){
     var token = auth.getToken();
-
     if(token){
       var payload = JSON.parse($window.atob(token.split('.')[1]));
       Restangular.setDefaultHeaders({Authorization: 'Bearer '  + token});
@@ -22,13 +21,11 @@ elexApp.factory('auth', ['Restangular','$http', '$window', function(Restangular,
     if(auth.isLoggedIn()){
       var token = auth.getToken();
       var payload = JSON.parse($window.atob(token.split('.')[1]));
-
       return payload.username;
     }
   };
   auth.register = function(user){
     var name = user.username;
-    console.log(user.username);
     return $http.post('/register', user).success(function(data){
       auth.saveToken(data.token);
     });
@@ -45,14 +42,16 @@ elexApp.factory('auth', ['Restangular','$http', '$window', function(Restangular,
     location.reload(true);
   };
 
-  //returns 400 bad request on post
-  auth.forgotPw = function(email){
-    return $http.post('/forgot', email).success(function(data){
-    console.log('done');
+  auth.forgotPw = function(user){
+    // console.log(user);
+    return $http.post('/forgot', user).success(function(data){
+      //console.log(data);
+      //console.log('yay')
     });
   };
-  auth.resetPw = function(){
 
+  auth.resetUserPass = function(user){
+    return $http.get('/reset',user);
   };
   //RestangularProvider.setDefaultHeaders({Authorization: Bearer " + auth.getToken() + "});
   return auth;

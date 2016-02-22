@@ -65,18 +65,18 @@ elexApp.config([
       templateUrl: '/forgot.html',
       controller: 'AuthCtrl',
       onEnter: ['$state', 'auth', function($state){
-
       }]
     })
+    //todo: fix after response.json render
     .state('reset', {
-      url: '/reset/{token}',
+      url: '/reset/{user}',
       templateUrl: '/reset.html',
       controller: 'AuthCtrl',
       resolve: {
-        reset: function($stateParams, Restangular){
-       
+        reset: function($stateParams,auth){
+          return auth.resetUserPass($stateParams.user);
+        }
       }
-    }
     })
     .state('register', {
       url: '/register',

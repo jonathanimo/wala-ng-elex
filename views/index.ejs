@@ -199,7 +199,7 @@
         <input type="email"
         class="form-control"
         placeholder="Email"
-        ng-model="email"></input>
+        ng-model="user.email"></input>
       </div>    
       <button type="submit" class="btn btn-primary">email me</button>
   </form>
@@ -209,24 +209,22 @@
     <h1>Elections App</h1>
     <h2>Reset Password</h2>
   </div>
-
   <div ng-show="error" class="alert alert-danger row">
     <span>{{ error.message }}</span>
   </div>
-
   <form ng-submit="resetPw()"
     style="margin-top:30px;">
     <h3>Reset password</h3>
       <div class="form-group">
         <input type="password"
         class="form-control"
-        placeholder="Password"
+        placeholder="New Password"
         ng-model="user.password"></input>
       </div>
       <div class="form-group">
         <input type="password"
         class="form-control"
-        placeholder="Password"
+        placeholder="Confirm New Password"
         ng-model="user.password"></input>
       </div>  
       <button type="submit" class="btn btn-primary">reset pw</button>

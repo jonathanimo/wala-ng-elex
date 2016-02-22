@@ -21,16 +21,22 @@ function($scope, $state, auth){
     });
   };
 
-    //returns 400 bad request on post
   $scope.forgotPw = function() {
-    auth.forgotPw($scope.email).error(function(error){
+    auth.forgotPw($scope.user).error(function(error){
       $scope.error = error;
     }).then(function(){
       $state.go('login');
+      console.log('user found');
     }); 
   }; //send email with request
 
-  $scope.resetPw = function(){
+  $scope.resetUserPass = function(){
+    auth.resetUserPass($scope.user).error(function(error){
+      $scope.error = error;
+    }).then(function(){
+      $state.go('login');
+      console.log('password reset');
+    }); 
 
   };// reset password if token is still valid
 }])

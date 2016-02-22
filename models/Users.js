@@ -39,4 +39,8 @@ UserSchema.methods.generateJWT = function() {
   }, 'SECRET');
 };
 
+UserSchema.methods.generateResetToken = function() {
+  this.resetPasswordToken = crypto.randomBytes(16).toString('hex');
+  this.resetPasswordExpires = Date.now() + 3600000;
+};
 mongoose.model('User', UserSchema);

@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
 var passport = require('passport');
+var nodemailer = require('nodemailer');
 var jwt = require('express-jwt');
 
 
@@ -53,6 +54,16 @@ router.param('candidate', function(req, res, next, id) {
     req.candidate = candidate;
     return next();
   });
+});
+
+router.param('user', function(req, res, next, token) {
+  var query = User.findOne({resetPasswordToken: token});
+  query
+  .exec(function (err,user){
+    if (!user) { return next(new Error('can\'t find that user: ' + err)); }
+        req.user = user;
+        return next();
+   })
 });
 
 /*************************************ROUTER POST REQUESTS***************************************************/
@@ -211,52 +222,44 @@ router.post('/api/v1/elections/:election/race/:race/candidate',auth, function(re
 });
 //returns 400 bad request on post
 router.post('/forgot', function(req, res, next) {
-  async.waterfall([
-    function(done) {
-      crypto.randomBytes(20, function(err, buf) {
-        var token = buf.toString('hex');
-        done(err, token);
-      });
-    },
-    function(token, done) {
-      User.findOne({ email: req.body.email }, function(err, user) {
-        if (!user) {
-          return res.redirect('/forgot');
-        }
-
-        user.resetPasswordToken = token;
-        user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
-
-        user.save(function(err) {
-          done(err, token, user);
-        });
-      });
-    },
-    function(token, user, done) {
-      var smtpTransport = nodemailer.createTransport('SMTP', {
-        service: 'SendGrid',
-        auth: {
-          user: 'jonathan_imo',
-          pass: 'Wo0dchuck!'
-        }
-      });
-      var mailOptions = {
-        to: user.email,
-        from: 'passwordreset@elexapp.com',
-        subject: 'Elex app Password Reset',
-        text: 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
-          'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
-          'http://' + req.headers.host + '/reset/' + token + '\n\n' +
-          'If you did not request this, please ignore this email and your password will remain unchanged.\n'
-      };
-      smtpTransport.sendMail(mailOptions, function(err) {
-        //req.message('info', 'An e-mail has been sent to ' + user.email + ' with further instructions.');
-        done(err, 'done');
+  var smtpTransport = nodemailer.createTransport('SMTP', {
+    service: 'SendGrid',
+    auth: {
+      user: 'jonathan_imo',
+      pass: 'Wo0dchuck!'
+      //TODO: add user and pw to environment variable
+    }
+  });
+ User.findOne({ email: req.body.email }, function(err, user) {
+    if (!user) {
+      return res.status(400).json({message: 'Email doesn\'t exist!' });
+    }
+    if(user){
+      user.generateResetToken();
+      user.save(function(err, user) {
+        if (err) return res.status(500).json({message:'Error saving user info:' + err});
+        var mailOptions = {
+          to: user.email,
+          from: 'jonathanimo89@gmail.com',
+          subject: 'Elex app Password Reset',
+          text: 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
+            'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
+            'http://' + req.headers.host + '/reset/' + user.resetPasswordToken + '\n\n' +
+            'If you did not request this, please ignore this email and your password will remain unchanged.\n'
+        };
+        smtpTransport.sendMail(mailOptions, function(error, response){
+          if(error){
+            return console.log(error);
+          }
+          console.log('Reset Message sent to: ' + user.email + '. ' +  response.message);
+        }); 
+      // return res.json({message:'Reset email sent to ' + user + 'check your email for further instructions.'})
+      //TODO should flash message saying the above but it isn't right now
       });
     }
-  ], function(err) {
-    if (err) return next(err);
-    res.redirect('/forgot');
+    else{
+      return res.status(500).json({message: 'Something else is wrong! Let us know at jandrews@cbs46.com, or on twitter. @CBS46' });
+    }
   });
 });
 
@@ -361,18 +364,30 @@ router.get('/forgot', function(req, res) {
   });
 });
 
-router.get('/reset/:token', function(req, res) {
-  User.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }, function(err, user) {
-    if (!user) {
-      //req.flash('error', 'Password reset token is invalid or has expired.');
-      return res.redirect('/forgot');
-    }
-    res.render('reset', {
-      user: req.user
-    });
-  });
+router.get('/reset', function(req, res) {
+  return res.json({message:'I don\'t think this page means what you think it means... Try logging in or Resetting your password?'});
 });
 
+router.get('/reset/:user', function(req, res) {
+  User.findOne({ resetPasswordToken: req.params.user, resetPasswordExpires: { $gt: Date.now() } }, function(err, user) {
+    if (!user) {
+      console.log(err);
+      res.redirect('/#/forgot').json({message:'Reset token is invalid or has expired, get another one below.'});
+    }
+    res.json(req.user);
+    });
+  });
+
+router.post('/reset/:user', function(req, res) {
+  User.findOne({ email:user.email }, function(err, user) {
+    if (!user) {
+      console.log(err);
+      //res.json({message:'Password reset token is invalid or has expired.'});
+      return res.redirect('/#/forgot');
+    }
+    res.json(req.user);
+    });
+  });
 router.post('/login', function(req, res, next){
   if(!req.body.username || !req.body.password){
     return res.status(400).json({message: 'Please fill out all fields'});

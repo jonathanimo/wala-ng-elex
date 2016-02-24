@@ -374,11 +374,14 @@ router.get('/reset/:user', function(req, res) {
       console.log(err);
       res.redirect('/#/forgot').json({message:'Reset token is invalid or has expired, get another one below.'});
     }
-    res.json(req.user);
+    res.render('reset', {
+      user: req.user
     });
   });
+});
 
 router.post('/reset/:user', function(req, res) {
+
   User.findOne({ email:user.email }, function(err, user) {
     if (!user) {
       console.log(err);

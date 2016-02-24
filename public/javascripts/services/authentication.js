@@ -50,9 +50,6 @@ elexApp.factory('auth', ['Restangular','$http', '$window', function(Restangular,
     });
   };
 
-  auth.resetUserPass = function(user){
-    return $http.get('/reset',user);
-  };
   //RestangularProvider.setDefaultHeaders({Authorization: Bearer " + auth.getToken() + "});
   return auth;
 }])

@@ -212,8 +212,10 @@
   <div ng-show="error" class="alert alert-danger row">
     <span>{{ error.message }}</span>
   </div>
+  <p>Use the form below to reset the password for<em>{{user.username}}</em></p>
   <form ng-submit="resetPw()"
     style="margin-top:30px;">
+
     <h3>Reset password</h3>
       <div class="form-group">
         <input type="password"

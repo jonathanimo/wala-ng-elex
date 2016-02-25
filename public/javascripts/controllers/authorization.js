@@ -1,8 +1,9 @@
 elexApp.controller('AuthCtrl', [
 '$scope',
 '$state',
+'resetter',
 'auth',
-function($scope, $state, auth){
+function($scope, $state,resetter,auth){
   $scope.user = {};
 
   $scope.register = function(){
@@ -31,7 +32,7 @@ function($scope, $state, auth){
   }; //send email with request
 
   $scope.resetUserPass = function(){
-    auth.resetUserPass($scope.user).error(function(error){
+    resetter.resetUserPass($scope.user).error(function(error){
       $scope.error = error;
     }).then(function(){
       $state.go('login');

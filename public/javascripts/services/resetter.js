@@ -1,4 +1,6 @@
-elexApp.factory('ResetFactory', ['Restangular','$http','resetter', function(Restangular,$http,resetter) {
+elexApp.factory('resetter', ['$http', function($http) {
+  var resetter = {};
+
   resetter.resetUserPass = function(user){
     payload = $http.get('/reset',user);
     user = {};

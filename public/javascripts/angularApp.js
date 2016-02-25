@@ -54,7 +54,7 @@ elexApp.config([
       url: '/login',
       templateUrl: '/login.html',
       controller: 'AuthCtrl',
-      onEnter: ['$state', 'auth', function($state, auth){
+      onEnter: ['$state','auth', function($state,auth){
         if(auth.isLoggedIn()){
           $state.go('allElections');
         }

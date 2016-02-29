@@ -1,18 +1,14 @@
-elexApp.factory('resetter', ['$http', function($http) {
-  var resetter = {};
-
-  resetter.resetUserPass = function(user){
-    payload = $http.get('/reset',user);
-    user = {};
-    user.username = payload.username;
-    return user;
-  };
-
-  resetter.resetRender = function(user){
-    return $http.get('/reset/' + user).then(function(req){
-      return resetter.user = req.data;
+elexApp.factory('resetFactory', ['$http', function($http) {
+  var r = {};
+  r.resetUserPass = function(user,newPassword){
+    return $http.put('/reset/' + user, newPassword).success(function(data){
+    	console.log(data);
     });
   };
-
-  return resetter;
+  r.getUser = function(user){
+    return $http.get('/reset/' + user).then(function(req){
+    	return req.data;
+	});
+  }
+  return r;
 }]);

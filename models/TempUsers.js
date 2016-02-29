@@ -4,14 +4,13 @@ var jwt = require('jsonwebtoken');
 
 var TempUserSchema = new mongoose.Schema({
   username: {type: String, lowercase: true, unique: true},
+  email: {type: String, lowercase: true, unique: true, required:true},
   hash: String,
   salt: String,
-  GENERATED_VERIFYING_URL: String
+  verifyToken: String,
+  verifyLinkExpires: Date
 });
 
-TempUserSchema.methods.checkDomain = function(username){
-
-};
 
 TempUserSchema.methods.setPassword = function(password){
   this.salt = crypto.randomBytes(16).toString('hex');

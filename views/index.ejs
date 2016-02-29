@@ -21,7 +21,9 @@
 
   <script src="javascripts/angularApp.js"></script>
   <script src="javascripts/controllers/authorization.js"></script>
+  <script src="javascripts/controllers/resetcontrol.js"></script>
   <script src="javascripts/services/authentication.js"></script>
+  <script src="javascripts/services/resetter.js"></script>
   <script src="javascripts/services/getAllElections.js"></script>
   <script src="javascripts/controllers/nav.js"></script>
   <!-- <script src="javascripts/services/getRaces.js"></script> -->
@@ -46,8 +48,8 @@
   </nav>
 <div class="page">
   <div class="userinfo" 
-    ng-controller="StatusController" ng-show="currentUser">
-    <span class="userinfo">Hi {{ currentUser.firstname }}</span>
+    ="StatusController" ng-show="currentUser">
+    <span clng-controllerass="userinfo">Hi {{ currentUser.firstname }}</span>
     <a ng-href="#/logout" ng-click="logout()">logout</a>
   </div><!-- userInfo block -->
   <ui-view></ui-view>
@@ -205,6 +207,7 @@
   </form>
 </script>
 <script type="text/ng-template" id="/reset.html">
+<section ng-controller="ResetCtrl">
   <div class="page-header">
     <h1>Elections App</h1>
     <h2>Reset Password</h2>
@@ -213,7 +216,7 @@
     <span>{{ error.message }}</span>
   </div>
   <p>Use the form below to reset the password for<em>{{user.username}}</em></p>
-  <form ng-submit="resetPw()"
+  <form ng-submit="resetPass()"
     style="margin-top:30px;">
 
     <h3>Reset password</h3>
@@ -221,16 +224,17 @@
         <input type="password"
         class="form-control"
         placeholder="New Password"
-        ng-model="user.password"></input>
+        ng-model="user.newPassword"></input>
       </div>
       <div class="form-group">
         <input type="password"
         class="form-control"
         placeholder="Confirm New Password"
-        ng-model="user.password"></input>
+        ng-model="user.confirmNewPassword"></input>
       </div>  
       <button type="submit" class="btn btn-primary">reset pw</button>
   </form>
+  </section>
 </script>
 <script type="text/ng-template" id="/register.html">
   <div class="page-header">

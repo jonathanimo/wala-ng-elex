@@ -1,10 +1,11 @@
-elexApp.controller('AuthCtrl', [
+elexApp.controller('AuthCtrl', 
+  [
 '$scope',
 '$state',
-'resetter',
+'$stateParams',
 'auth',
-function($scope, $state,resetter,auth){
-  $scope.user = {};
+function($scope,$state,$stateParams,auth,Restangular){
+// console.log(user.data);
 
   $scope.register = function(){
     auth.register($scope.user).error(function(error){
@@ -31,13 +32,6 @@ function($scope, $state,resetter,auth){
     }); 
   }; //send email with request
 
-  $scope.resetUserPass = function(){
-    resetter.resetUserPass($scope.user).error(function(error){
-      $scope.error = error;
-    }).then(function(){
-      $state.go('login');
-      console.log('password reset');
-    }); 
-
-  };// reset password if token is still valid
-}])
+}
+]
+)

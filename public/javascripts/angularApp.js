@@ -45,8 +45,10 @@ elexApp.config([
       templateUrl: '/election-form.html',
       controller: 'ElectionBackEndController',
       resolve: {
-        election: function($stateParams,Restangular,ElectionFactory){
-          return ElectionFactory.getOneToEdit($stateParams.election);
+        election: function($stateParams,Restangular,ElectionFactory,auth){
+          if (auth.isLoggedIn()) {
+            return ElectionFactory.getOneToEdit($stateParams.election);
+          }
         }
       }
     })
@@ -67,15 +69,15 @@ elexApp.config([
       onEnter: ['$state', 'auth', function($state){
       }]
     })
-    //todo: fix after response.json render
+
     .state('reset', {
       url: '/reset/{user}',
       templateUrl: '/reset.html',
-      controller: 'AuthCtrl',
+      controller: 'ResetCtrl',
       resolve: {
-        reset: function($stateParams,auth){
-          return auth.resetUserPass($stateParams.user);
-        }
+       user: function($stateParams,$http,Restangular,resetFactory){
+        return resetFactory.getUser($stateParams.user);
+       }
       }
     })
     .state('register', {
@@ -89,7 +91,6 @@ elexApp.config([
       }]
     })
     $urlRouterProvider.otherwise('elections');
-    //TODO Make this work with restangular
     RestangularProvider.setBaseUrl('/api/v1');
     RestangularProvider.setRestangularFields({
         id: '_id.ObjectId'

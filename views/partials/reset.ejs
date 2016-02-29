@@ -4,10 +4,9 @@
     novalidate>
 
     <h1>Hi there!</h1>
-    <p>Log-in to edit the races</p>
 
-    <p class="error formerror" ng-show="message">{{ message }}</p>
-
+    <p class="error formerror" ng-show="message">{{ error.message }}</p>
+    {{user.username}}
     <input type="email" name="email" placeholder="Email"
       ng-model="user.email" ng-required="true">
     <p class="error validationerror"
@@ -22,6 +21,6 @@
 
     <button type="submit" class="btn"
       ng-disabled="myform.$invalid">Login</button>
-    <p>or <a href="#/register">register</a></p>
+    <p>or <a href="/#/register">register</a></p>
   </form>
 </section>

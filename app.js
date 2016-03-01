@@ -8,6 +8,7 @@ var mongoose = require('mongoose');
 var passport = require('passport');
 var async = require('async');
 
+
 //Mongoose models
 require('./models/Candidate');
 require('./models/Race');
@@ -22,6 +23,7 @@ var routes = require('./routes/index');
 var users = require('./routes/users');
 
 var app = express();
+
 
 
 //mongoose connection
@@ -41,6 +43,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(passport.initialize());
 app.use('/', routes);
 app.use('/users', users);
+
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

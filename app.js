@@ -7,7 +7,7 @@ var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var passport = require('passport');
 var async = require('async');
-
+var socket_io    = require( 'socket.io' );
 
 //Mongoose models
 require('./models/Candidate');
@@ -18,13 +18,17 @@ require('./models/Users');
 //require passportjs for authentication
 require('./config/passport');
 
-//setting up routes
-var routes = require('./routes/index');
-var users = require('./routes/users');
+
 
 var app = express();
 
+// Socket.io
+var io = socket_io();
+app.io = io;
 
+//setting up routes
+var routes = require('./routes/index')(io);
+var users = require('./routes/users');
 
 //mongoose connection
 mongoose.connect('mongodb://localhost/ng-elex');
@@ -43,7 +47,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(passport.initialize());
 app.use('/', routes);
 app.use('/users', users);
-
 
 
 // catch 404 and forward to error handler
@@ -76,6 +79,5 @@ app.use(function(err, req, res, next) {
     error: {}
   });
 });
-
 
 module.exports = app;

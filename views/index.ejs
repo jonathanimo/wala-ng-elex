@@ -8,25 +8,24 @@
   <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
   <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-  <script src="javascripts/socket.io.js"></script>
   <script src="javascripts/lib/angular/angular.js"></script>
   <script src="javascripts/lib/angular/angular-ui-router.js"></script>
   <script src="javascripts/lib/angular/angular-animate.min.js"></script>
   <script type="text/javascript" src="javascripts/chance.js"></script>
+  <script type="text/javascript" src="javascripts/socket.io-client/socket.io.js"></script>
+  <script type="text/javascript" src="javascripts/angular-socket-io/socket.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-moment/0.10.1/angular-moment.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
   <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/restangular/1.3.1/restangular.min.js"></script>
   <script type="text/javascript" src="javascripts/lib/ui-bootstrap-tpls-0.13.0.min.js"></script>
 <!-- END CDN LOADS -->
 <!-- MY LOADS -->
-  <script>
-  var socket = io();
-</script>
 
   <script src="javascripts/angularApp.js"></script>
   <script src="javascripts/controllers/authorization.js"></script>
   <script src="javascripts/controllers/resetcontrol.js"></script>
   <script src="javascripts/services/authentication.js"></script>
+  <script src="javascripts/services/socketFactory.js"></script>
   <script src="javascripts/services/resetter.js"></script>
   <script src="javascripts/services/getAllElections.js"></script>
   <script src="javascripts/controllers/nav.js"></script>
@@ -275,50 +274,143 @@
   </form>
 </script>
 <script type="text/ng-template" id="/races.html">
-  <section> 
+<link href='https://fonts.googleapis.com/css?family=Arvo:400,700|Droid+Sans' rel='stylesheet' type='text/css'>
+
+  <section>
     <style>
+    .election{
+      font-family: 'Droid Sans', sans-serif;
+    }
       .one_race{
-        border: 2px solid rgba(224,224,224,1);
-        margin:20px 0px;
-        padding:10px;
-        -webkit-border-radius: 15px;
-        -moz-border-radius: 15px;
-        border-radius: 15px;
-        -webkit-box-shadow: -8px 5px 17px 0px rgba(50, 50, 50, 0.31);
-        -moz-box-shadow:-8px 5px 17px 0px rgba(50, 50, 50, 0.31);
-        box-shadow:-8px 5px 17px 0px rgba(50, 50, 50, 0.31);
+       
       }
       .win{font-size:2em;
         color:green;}
+      .percent{
+        font-size:2em;
+      }
+      .vote-progress{
+        height:2em;
+        margin-bottom:1px;
+        float: left;
+        padding-left: 0;
+        background-color: #f5f5f5;
+        padding-right:0;
+      }
+      .votes-bar{
+        font-size: 1em;
+        line-height: 1.25em;
+        text-align: left; 
+        padding-left:9px;
+        float: left;
+        height: 100%;
+        color: #fff;
+        -webkit-transition: width .6s ease;
+        -o-transition: width .6s ease;
+        transition: width .6s ease;
+        background: #337ab7; /* For browsers that do not support gradients */
+        background: -webkit-linear-gradient(right, #2d6da3, #337ab7); /* For Safari 5.1 to 6.0 */
+        background: -o-linear-gradient(right, #2d6da3, #337ab7); /* For Opera 11.1 to 12.0 */
+        background: -moz-linear-gradient(right, #2d6da3, #337ab7); /* For Firefox 3.6 to 15 */
+        background: linear-gradient(right, #2d6da3, #337ab7); /* Standard syntax */
+      }
+      .one_cand{
+        margin:0;
+        padding:0;
+        float:left;
+        clear:left ;
+      }
+      .election_name *{
+        float:left;
+        clear:left;
+      }
+      .election_name >span{
+        margin-bottom:7px;
+        font-weight:bold;
+      }
+      .election_name small{
+        font-size:.5em;
+      }
+      .cand_name{
+        color:black;
+        width:68vw;
+        padding-left: 2vw;
+        padding-right:2vw;
+        font-size:.7em;
+        /*font-size:5vw;*/
+        display:block;
+
+      }
+      .info_block *{
+        display:block;
+      }
+      .info_block{padding:auto 10px;
+      font-family: 'Arvo', serif;}
+      .cand_name .name{
+        font-weight:bold;
+        float:left;
+
+      }
+      .one_cand *{
+      }
+      .cand_name .percent-vote, .cand_name .number-vote, .cand_name .pipe{
+        float:left;
+        margin:auto 8px;
+        font-size:.65em;
+        /*font-size:4vw;*/
+        font-weight:200;
+      }
+      .cand_name .number-vote{
+        margin-left:0;
+      }
+      .one_cand .cand-image{
+        float:left;
+        padding:0;
+        border-right:1px solid white;
+
+      }
+      .one_cand .cand-image img{
+      }
+      .cand_info{
+        float:left;
+        clear:left;
+        line-height: .3em;
+      }
+      .race_name{
+        font-weight:700;
+      }
     </style>
     <body ng-controller="ElectionFrontEndController as raceViewCtrl">
-      <h1 class="text-center">{{elex.electionName}}<br/>
-      <small class="precints">PRECINTS REPORTING: <span>{{elex.precinctsRep}} / {{elex.precinctsTotal}}<span class="label label-info"> {{(elex.precinctsRep/elex.precinctsTotal) | percentage:1}} %</span></span></small><br/>
-      <small class="precints">UPDATED: <span>{{elex.electionDate | date}}</span></small>
+    <div class="container election">
+      <h1 class="election_name"><span>{{elex.electionName}}</span>
+      <small class="precints">PRECINTS REPORTING: {{(elex.precinctsRep/elex.precinctsTotal) | percentage:1}}%</span></span></small><br/>
+      <small class="precints">UPDATED: {{elex.electionDate | amDurationFormat : 'minute' }}</small>
       </h1>
-        <section ng-repeat="r in races"  class="one_race row text-center">
-          <h2 class="text-center">{{r.raceName}} <small>{{r.allVotes | number}} votes counted</small></h2>
+        <section ng-repeat="r in races"  class="one_race row">
+          <h2 class="col-sm-12 race_name">{{r.raceName}} <small>{{r.allVotes | number}} votes counted</small></h2>
             <div class="candidates">
-              <div ng-repeat="candidate in r.candidates | orderBy:'-voteTotal'" class="one_cand col-sm-6">
-                <div class="cand_name">
-                  <h3>
-                    <STRONG>{{candidate.firstName + " " + candidate.lastName}}</STRONG><small> {{candidate.party}}</small>
-                  </h3>
-                </div><!-- cand_name -->
-                <div class="percent progress">
-                    <div class="progress-bar progress-bar-danger percentage-bar" role="progressbar" aria-valuenow="{{(candidate.voteTotal / r.allVotes)*100 | percentage:1 }}" aria-valuemin="0" aria-valuemax="100" ng-style="{'min-width': '2em', 'width': (candidate.voteTotal / r.allVotes | percentage:0) +'%'}">
-                    {{candidate.voteTotal / r.allVotes | percentage:0}} %
+              <div ng-repeat="candidate in r.candidates | orderBy:'-voteTotal'" class="one_cand col-sm-12">
+                <div class="cand-image col-sm-1">
+                  <img src="http://placehold.it/80x56" />
+                </div>
+                <div class="percent vote-progress col-sm-11">
+                    <div class="votes-bar" ng-style="r.allVotes > 0 && {'width': (candidate.voteTotal / r.allVotes | percentage:0) +'%'} || {'width':'1em'}">
+                    <div class="info_block">
+                    <div class="cand_name">
+                    <span class="name">{{candidate.firstName + " " + candidate.lastName}}</span>
+                    <div class="cand_info">
+                      <span class="number-vote">{{candidate.voteTotal | number}} votes</span><span class="pipe">|</span>
+                      <span class="percent-vote">{{candidate.voteTotal / r.allVotes | percentage:0}}%</span>
+                      </div>
+                    </div>
+                    </div>
                   </div>
                 </div><!-- .percent .progress -->
-                <div class="votes">
-                  <h4>
-                    {{candidate.voteTotal | number}} / {{r.allVotes | number}} votes
-                  </h4>
-                </div><!-- votes -->
               </div><!-- one_cand -->
             </div>
         </div><!-- one_race -->
       </div> <!-- container -->
+    </div>
     </section>
 </script>
 

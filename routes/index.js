@@ -1,9 +1,16 @@
+module.exports = function(io) {
 var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
 var passport = require('passport');
 var nodemailer = require('nodemailer');
 var jwt = require('express-jwt');
+
+
+    
+    
+
+
 var smtpTransport = nodemailer.createTransport('SMTP', {
   service: 'SendGrid',
   auth: {
@@ -187,6 +194,7 @@ router.put('/api/v1/elections/:election',auth, function(req, res) {
                 if (err)
                     res.send(err);
                 console.log(req.body.electionName);
+                io.sockets.emit("election updated", req.body);
                 res.json({ message: 'Updated!' });
             });
         });
@@ -412,4 +420,7 @@ router.post('/login', function(req, res, next){
   (req, res, next);
 });
 
-module.exports = router;
+return router;
+
+}
+

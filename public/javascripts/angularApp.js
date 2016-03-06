@@ -2,6 +2,8 @@ var elexApp = angular.module('elexApp', [
   'ui.router',
   'restangular',
   'ui.bootstrap',
+  'btford.socket-io',
+  'angularMoment',
   'appControllers'
   ]);
 

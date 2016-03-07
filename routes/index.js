@@ -6,11 +6,6 @@ var passport = require('passport');
 var nodemailer = require('nodemailer');
 var jwt = require('express-jwt');
 
-
-    
-    
-
-
 var smtpTransport = nodemailer.createTransport('SMTP', {
   service: 'SendGrid',
   auth: {
@@ -165,14 +160,13 @@ router.put('/api/v1/elections/:election/races/:race',auth, function(req, res) {
             race.raceName = req.body.raceName;
             race.seats = req.body.seats;
             race.isOver = req.body.isOver;
-            race.allVotes = req.body.allVotes;
             race.updated = Date.now();
             race.candidates = req.body.candidates;
+            race.allVotes = race.calculateVotes(req.body.candidates);
 
             race.save(function(err) {
                 if (err)
                     res.send(err);
-
               res.json({ message: 'Updated!' });
             });
 
@@ -193,7 +187,6 @@ router.put('/api/v1/elections/:election',auth, function(req, res) {
             election.save(function(err) {
                 if (err)
                     res.send(err);
-                console.log(req.body.electionName);
                 io.sockets.emit("election updated", req.body);
                 res.json({ message: 'Updated!' });
             });

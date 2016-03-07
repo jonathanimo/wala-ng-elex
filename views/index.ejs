@@ -41,7 +41,7 @@
 <body>
 <header>
 </header>
-  <nav class="navbar navbar-default pull-right" ng-controller="NavCtrl">
+  <nav class="navbar navbar-default pull-right" ng-if="showNav" ng-controller="NavCtrl">
     <ul class="nav navbar-nav">
       <li ng-show="isLoggedIn()"><a>{{ currentUser() }}</a></li>
       <li ng-show="isLoggedIn()"><a href="" ng-click="logOut()">Log Out</a></li>
@@ -369,8 +369,7 @@
         border-right:1px solid white;
 
       }
-      .one_cand .cand-image img{
-      }
+
       .cand_info{
         float:left;
         clear:left;
@@ -379,19 +378,31 @@
       .race_name{
         font-weight:700;
       }
+      .elex_info small{
+        font-size:.5em;
+      }
+      .elex_info{
+        font-size:2em;
+      }
+      .elex_info *{
+        display:block;
+        position:relative;
+      }
     </style>
     <body ng-controller="ElectionFrontEndController as raceViewCtrl">
     <div class="container election">
+    <div class="elex_info">
       <h1 class="election_name"><span>{{elex.electionName}}</span>
-      <small class="precints">PRECINTS REPORTING: {{(elex.precinctsRep/elex.precinctsTotal) | percentage:1}}%</span></span></small><br/>
-      <small class="precints">UPDATED: {{elex.electionDate | amDurationFormat : 'minute' }}</small>
+      <small>Precincts reporting: {{(elex.precinctsRep/elex.precinctsTotal) | percentage:1}}%</span></span></small><br/>
+      <small>Last update: {{elex.electionDate | date}}</small>
       </h1>
+    </div>
         <section ng-repeat="r in races"  class="one_race row">
           <h2 class="col-sm-12 race_name">{{r.raceName}} <small>{{r.allVotes | number}} votes counted</small></h2>
             <div class="candidates">
               <div ng-repeat="candidate in r.candidates | orderBy:'-voteTotal'" class="one_cand col-sm-12">
                 <div class="cand-image col-sm-1">
-                  <img src="http://placehold.it/80x56" />
+                  <img src="http://placehold.it/56x56" class="img-responsive" />
                 </div>
                 <div class="percent vote-progress col-sm-11">
                     <div class="votes-bar" ng-style="r.allVotes > 0 && {'width': (candidate.voteTotal / r.allVotes | percentage:0) +'%'} || {'width':'1em'}">

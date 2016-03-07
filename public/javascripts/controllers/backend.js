@@ -44,13 +44,9 @@ elexApp.controller('ElectionBackEndController', function($scope,$stateParams,$ht
     };
 
     $scope.updateRaceCans = function(r,c){//updates candidates on update
-        var theTotal = 0;
         for (var n = c.length - 1; n >= 0; n--) { 
             var theCan = $scope.races[r].candidates[n];
-            var canVotes = parseInt(theCan.voteTotal);
-            theTotal += canVotes;
             election.one('races',theRace._id).one('candidate', theCan._id).customPUT(theCan).then(function(can){
-                return theTotal;
             },function error(reason){
                 console.log(reason);
             });
@@ -63,7 +59,6 @@ elexApp.controller('ElectionBackEndController', function($scope,$stateParams,$ht
             var theRace = $scope.races[i];
             $scope.updateRaceCans($scope.races[i],$scope.races[i].candidates);
             if (theRace) {
-                theRace.allVotes = $scope.updateRaceCans.theTotal;
                 election.one('races',theRace._id).customPUT(theRace).then(function(race){
                  //$scope.races = election.getList('races').$object;
                 },function error(reason){
@@ -79,7 +74,6 @@ elexApp.controller('ElectionBackEndController', function($scope,$stateParams,$ht
             var theRace = $scope.races[i];
             $scope.updateRaceCans($scope.races[i],$scope.races[i].candidates);
             if (theRace) {
-                theRace.allVotes = $scope.updateRaceCans.theTotal;
                 election.one('races',theRace._id).customPUT(theRace).then(function(race){
                  //$scope.races = election.getList('races').$object;
                 },function error(reason){
@@ -108,18 +102,14 @@ elexApp.controller('ElectionBackEndController', function($scope,$stateParams,$ht
              for (var i = $scope.races.length - 1; i >= 0; i--) {
                  var candidates = $scope.races[i].candidates;
                  var theRace = $scope.races[i];
-                 var theTotal = 0;
                  for (var n = candidates.length - 1; n >= 0; n--) { //updates candidates on update
                     var theCan = $scope.races[i].candidates[n];
                     var canVotes = parseInt(theCan.voteTotal);
-                    theTotal += canVotes;
                     election.one('races',theRace._id).one('candidate', theCan._id).customPUT(theCan).then(function(can){
                     },function error(reason){
                         console.log(reason);
                     });
                 };
-                theRace.allVotes = theTotal;
-               
                 election.one('races',theRace._id).customPUT(theRace).then(function(race){
                     //$scope.races = election.getList('races').$object;
                 },function error(reason){
